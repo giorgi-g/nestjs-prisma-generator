@@ -107,7 +107,7 @@ export const computePlainDtoParams = ({
       if (isAnnotatedWith(field, DTO_API_HIDDEN)) {
         decorators.apiHideProperty = true;
       } else {
-        decorators.apiProperties = parseApiProperty(
+        const { apiProperties, gqlProperties } = parseApiProperty(
           {
             ...field,
             isRequired: templateHelpers.config.requiredResponseApiProperty
@@ -120,6 +120,8 @@ export const computePlainDtoParams = ({
             type: templateHelpers.config.outputApiPropertyType,
           },
         );
+        decorators.apiProperties = apiProperties;
+        decorators.gqlProperties = gqlProperties;
         const typeProperty = decorators.apiProperties.find(
           (p) => p.name === 'type',
         );

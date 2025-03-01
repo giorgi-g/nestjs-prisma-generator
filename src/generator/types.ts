@@ -23,6 +23,7 @@ export interface ParsedField {
   hasDefaultValue?: boolean;
   default?: any;
   apiProperties?: IApiProperty[];
+  gqlProperties?: IApiProperty[];
   apiHideProperty?: boolean;
   classValidators?: IClassValidator[];
   relationName?: string;
@@ -118,6 +119,7 @@ export interface IClassValidator {
 
 export interface IDecorators {
   apiProperties?: IApiProperty[];
+  gqlProperties?: IApiProperty[];
   apiHideProperty?: boolean;
   classValidators?: IClassValidator[];
 }

@@ -2,6 +2,7 @@ import { DMMF } from '@prisma/generator-helper';
 import { IApiProperty, ImportStatementParams, ParsedField } from './types';
 import { DTO_OVERRIDE_API_PROPERTY_TYPE } from './annotations';
 import { isAnnotatedWith } from './field-classifiers';
+import { Float, Int } from '@nestjs/graphql';
 
 const ApiProps = [
   'description',
@@ -89,6 +90,28 @@ export function encapsulateString(value: string): string {
   return `'${value.replace(/'/g, "\\'")}'`;
 }
 
+export const jsonTypeToString = (str: string = ''): string => {
+  const lwc = str.toLowerCase();
+  if (lwc === 'json') {
+    return 'String';
+  }
+
+  return str;
+}
+
+export const mapToGQLType = (str: string = ''): string => {
+  const lwc = str.toLowerCase();
+  if (lwc === 'date-time') {
+    return 'Date';
+  } else if (lwc === 'decimal.js' || lwc === 'float') {
+    return 'Float';
+  } else if (lwc === 'int32') {
+    return 'Int';
+  }
+
+  return 'String';
+}
+
 /**
  * Parse all types of annotation that can be decorated with `@ApiProperty()`.
  * @param field
@@ -102,7 +125,7 @@ export function parseApiProperty(
     enum?: boolean;
     type?: boolean;
   } = {},
-): IApiProperty[] {
+): { apiProperties: IApiProperty[]; gqlProperties: IApiProperty[] } {
   const incl = {
     default: true,
     doc: true,
@@ -111,6 +134,7 @@ export function parseApiProperty(
     ...include,
   };
   const properties: IApiProperty[] = [];
+  const gqlProperties: IApiProperty[] = [];
 
   if (incl.doc && field.documentation) {
     for (const prop of ApiProps) {
@@ -133,18 +157,39 @@ export function parseApiProperty(
         value: '() => ' + castType,
         noEncapsulation: true,
       });
+
+      gqlProperties.push({
+        name: 'type',
+        value: field.isList ? '() => [' + castType + ']' : '() => ' + castType,
+      });
     } else if (scalarFormat) {
       properties.push({
         name: 'type',
         value: scalarFormat.type,
       });
+
+      gqlProperties.push({
+        name: 'type',
+        value: field.isList ? `() => [${mapToGQLType(scalarFormat.type)}]` : `() => ${mapToGQLType(scalarFormat.type)}`,
+      });
+
       if (scalarFormat.format) {
         properties.push({ name: 'format', value: scalarFormat.format });
+        gqlProperties.push({
+          name: 'format',
+          value: field.isList ? `() => [${mapToGQLType(scalarFormat.format)}]` : `() => ${mapToGQLType(scalarFormat.format)}`,
+        });
       }
     } else if (field.kind !== 'enum') {
       properties.push({
         name: 'type',
         value: field.type,
+        noEncapsulation: true,
+      });
+
+      gqlProperties.push({
+        name: 'enum',
+        value: field.isList ? '() => [' + jsonTypeToString(field.type) + ']' : '() => ' + jsonTypeToString(field.type),
         noEncapsulation: true,
       });
     }
@@ -161,23 +206,69 @@ export function parseApiProperty(
   const defaultValue = getDefaultValue(field);
   if (incl.default && defaultValue !== undefined) {
     properties.push({ name: 'default', value: `${defaultValue}` });
+    gqlProperties.push({ name: 'defaultValue', value: `${defaultValue}` });
   }
 
   if (!field.isRequired) {
     properties.push({ name: 'required', value: 'false' });
   }
+
   if (
     typeof field.isNullable === 'boolean' ? field.isNullable : !field.isRequired
   ) {
     properties.push({ name: 'nullable', value: 'true' });
+    gqlProperties.push({ name: 'nullable', value: 'true' });
   }
 
   // set dummy property to force `@ApiProperty` decorator
   if (properties.length === 0) {
     properties.push({ name: 'dummy', value: '' });
+    gqlProperties.push({ name: 'dummy', value: '' });
   }
 
-  return properties;
+  return { apiProperties: properties, gqlProperties };
+}
+
+/**
+ * Compose `@Field()` decorator.
+ */
+export function decorateField(field: ParsedField): string {
+  if (field.apiHideProperty) {
+    return '@ApiHideProperty()\n';
+  }
+
+  if (
+    field.gqlProperties?.length === 1 &&
+    field.gqlProperties[0].name === 'dummy'
+  ) {
+    return '@Field()\n';
+  }
+
+  let decorator = '';
+
+  if (field.gqlProperties?.length) {
+    const typeProperty = field.gqlProperties.find(x => x.name === 'type');
+    const enumProperty = field.gqlProperties.find(x => x.name === 'enum');
+    const formatProperty = field.gqlProperties.find(x => x.name === 'format');
+    const type = formatProperty || typeProperty || enumProperty;
+
+    const filteredProps = field.gqlProperties.filter(x => !['dummy', 'type', 'enum', 'format'].includes(x.name));
+    const hasOtherProps = filteredProps.length;
+
+    decorator += `@Field(${type?.value != null ? `${eval(type.value)}${hasOtherProps ? ', ' : ''}` : ''}${hasOtherProps ? '{\n' : ''}`;
+
+    filteredProps.forEach((prop) => {
+      decorator += ` ${prop.name}: ${
+        prop.noEncapsulation
+          ? prop.value
+          : encapsulateString(prop.value)
+      },\n`;
+    });
+
+    decorator += `${hasOtherProps ? '}' : ''})`;
+  }
+
+  return decorator;
 }
 
 /**
@@ -218,16 +309,23 @@ export function makeImportsFromNestjsSwagger(
   apiExtraModels?: string[],
 ): ImportStatementParams[] {
   const hasApiProperty = fields.some((field) => field.apiProperties?.length);
+  const hasGqlProperties = fields.some((field) => field.gqlProperties?.length);
   const hasApiHideProperty = fields.some((field) => field.apiHideProperty);
 
   if (hasApiProperty || hasApiHideProperty || apiExtraModels?.length) {
     const destruct: string[] = [];
+    const destructGqlTypes: string[] = ['Field'];
 
     if (apiExtraModels?.length) destruct.push('ApiExtraModels');
     if (hasApiHideProperty) destruct.push('ApiHideProperty');
     if (hasApiProperty) destruct.push('ApiProperty');
 
-    return [{ from: '@nestjs/swagger', destruct }];
+    if (hasGqlProperties) {
+      destructGqlTypes.push('Int');
+      destructGqlTypes.push('Float');
+    }
+
+    return [{ from: '@nestjs/swagger', destruct }, { from: '@nestjs/graphql', destruct: destructGqlTypes }];
   }
 
   return [];

@@ -174,7 +174,7 @@ export const computeEntityParams = ({
       if (isAnnotatedWith(field, DTO_API_HIDDEN)) {
         decorators.apiHideProperty = true;
       } else {
-        decorators.apiProperties = parseApiProperty(
+        const { apiProperties, gqlProperties } = parseApiProperty(
           {
             ...field,
             ...overrides,
@@ -187,6 +187,8 @@ export const computeEntityParams = ({
             type: templateHelpers.config.outputApiPropertyType,
           },
         );
+        decorators.apiProperties = apiProperties;
+        decorators.gqlProperties = gqlProperties;
         const typeProperty = decorators.apiProperties.find(
           (p) => p.name === 'type',
         );

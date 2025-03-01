@@ -255,7 +255,7 @@ export const generateRelationInput = ({
   canDisconnectAnnotation,
 }: GenerateRelationInputParam) => {
   const relationInputClassProps: Array<
-    Pick<ParsedField, 'name' | 'type' | 'apiProperties' | 'classValidators'>
+    Pick<ParsedField, 'name' | 'type' | 'apiProperties' | 'gqlProperties' | 'classValidators'>
   > = [];
 
   const imports: ImportStatementParams[] = [];
@@ -316,6 +316,7 @@ export const generateRelationInput = ({
 
     const decorators: {
       apiProperties?: IApiProperty[];
+      gqlProperties?: IApiProperty[];
       classValidators?: IClassValidator[];
     } = {};
 
@@ -332,10 +333,13 @@ export const generateRelationInput = ({
     }
 
     if (!t.config.noDependencies) {
-      decorators.apiProperties = parseApiProperty(
+      const { apiProperties, gqlProperties } = parseApiProperty(
         { ...field, isRequired },
         { type: false },
       );
+
+      decorators.apiProperties = apiProperties;
+      decorators.gqlProperties = gqlProperties;
       decorators.apiProperties.push({
         name: 'type',
         value: castApiType ? '() => ' + castApiType : preAndPostfixedName,
@@ -349,6 +353,7 @@ export const generateRelationInput = ({
       name: 'create',
       type: castType || preAndPostfixedName,
       apiProperties: decorators.apiProperties,
+      gqlProperties: decorators.gqlProperties,
       classValidators: decorators.classValidators,
     });
   }
@@ -374,6 +379,7 @@ export const generateRelationInput = ({
 
     const decorators: {
       apiProperties?: IApiProperty[];
+      gqlProperties?: IApiProperty[];
       classValidators?: IClassValidator[];
     } = {};
 
@@ -390,10 +396,13 @@ export const generateRelationInput = ({
     }
 
     if (!t.config.noDependencies) {
-      decorators.apiProperties = parseApiProperty(
+      const { apiProperties, gqlProperties } = parseApiProperty(
         { ...field, isRequired },
         { type: false },
       );
+
+      decorators.apiProperties = apiProperties;
+      decorators.gqlProperties = gqlProperties;
       decorators.apiProperties.push({
         name: 'type',
         value: castApiType ? '() => ' + castApiType : preAndPostfixedName,
@@ -407,6 +416,7 @@ export const generateRelationInput = ({
       name: 'connect',
       type: castType || preAndPostfixedName,
       apiProperties: decorators.apiProperties,
+      gqlProperties: decorators.gqlProperties,
       classValidators: decorators.classValidators,
     });
   }
@@ -421,6 +431,7 @@ export const generateRelationInput = ({
     if (!field.isList) {
       const decorators: {
         apiProperties?: IApiProperty[];
+        gqlProperties?: IApiProperty[];
         classValidators?: IClassValidator[];
       } = {};
 
@@ -439,10 +450,13 @@ export const generateRelationInput = ({
       }
 
       if (!t.config.noDependencies) {
-        decorators.apiProperties = parseApiProperty(
+        const { apiProperties, gqlProperties } = parseApiProperty(
           { ...field, isRequired },
           { type: false },
         );
+
+        decorators.apiProperties = apiProperties;
+        decorators.gqlProperties = gqlProperties;
         decorators.apiProperties.push({
           name: 'type',
           value: 'boolean',
@@ -454,6 +468,7 @@ export const generateRelationInput = ({
         name: 'disconnect',
         type: 'boolean',
         apiProperties: decorators.apiProperties,
+        gqlProperties: decorators.gqlProperties,
         classValidators: decorators.classValidators,
       });
     } else {
@@ -479,6 +494,7 @@ export const generateRelationInput = ({
 
       const decorators: {
         apiProperties?: IApiProperty[];
+        gqlProperties?: IApiProperty[];
         classValidators?: IClassValidator[];
       } = {};
 
@@ -495,10 +511,13 @@ export const generateRelationInput = ({
       }
 
       if (!t.config.noDependencies) {
-        decorators.apiProperties = parseApiProperty(
+        const { apiProperties, gqlProperties } = parseApiProperty(
           { ...field, isRequired },
           { type: false },
         );
+
+        decorators.apiProperties = apiProperties;
+        decorators.gqlProperties = gqlProperties;
         decorators.apiProperties.push({
           name: 'type',
           value: castApiType ? '() => ' + castApiType : preAndPostfixedName,
@@ -510,6 +529,7 @@ export const generateRelationInput = ({
         name: 'disconnect',
         type: castType || preAndPostfixedName,
         apiProperties: decorators.apiProperties,
+        gqlProperties: decorators.gqlProperties,
         classValidators: decorators.classValidators,
       });
     }
@@ -586,6 +606,7 @@ export const generateUniqueInput = ({
     const overrides: Partial<DMMF.Field> = { isRequired: true };
     const decorators: {
       apiProperties?: IApiProperty[];
+      gqlProperties?: IApiProperty[];
       classValidators?: IClassValidator[];
     } = {};
 
@@ -602,7 +623,7 @@ export const generateUniqueInput = ({
     }
 
     if (!t.config.noDependencies) {
-      decorators.apiProperties = parseApiProperty(
+      const { apiProperties, gqlProperties } = parseApiProperty(
         {
           ...field,
           ...overrides,
@@ -611,6 +632,9 @@ export const generateUniqueInput = ({
           type: t.config.outputApiPropertyType,
         },
       );
+
+      decorators.apiProperties = apiProperties;
+      decorators.gqlProperties = gqlProperties;
       const typeProperty = decorators.apiProperties.find(
         (p) => p.name === 'type',
       );

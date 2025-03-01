@@ -132,7 +132,7 @@ export const computeConnectDtoParams = ({
     }
 
     if (!templateHelpers.config.noDependencies) {
-      decorators.apiProperties = parseApiProperty(
+      const { apiProperties, gqlProperties } = parseApiProperty(
         {
           ...field,
           ...overrides,
@@ -142,6 +142,9 @@ export const computeConnectDtoParams = ({
           type: templateHelpers.config.outputApiPropertyType,
         },
       );
+      decorators.apiProperties = apiProperties;
+      decorators.gqlProperties = gqlProperties;
+
       const typeProperty = decorators.apiProperties.find(
         (p) => p.name === 'type',
       );

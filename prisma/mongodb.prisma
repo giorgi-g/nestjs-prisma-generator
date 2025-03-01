@@ -22,6 +22,7 @@ generator nestjsDto {
   outputType                      = "class"
   prettier                        = "true"
   requiredResponseApiProperty     = "false"
+  addGraphqlTypes                 = "true"
 }
 
 model Product {

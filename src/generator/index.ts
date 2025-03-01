@@ -38,6 +38,7 @@ interface RunParam {
   generateFileTypes: string;
   wrapRelationsAsType: boolean;
   showDefaultValues: boolean;
+  addGraphqlTypes: boolean
 }
 
 export const run = ({

@@ -51,6 +51,12 @@ export const generate = async (options: GeneratorOptions) => {
     false,
   );
 
+  const addGraphqlTypes = stringToBoolean(
+    options.generator.config.addGraphqlTypes,
+    // using `true` as default value would be a breaking change
+    false,
+  );
+
   const flatResourceStructure = stringToBoolean(
     options.generator.config.flatResourceStructure,
     // using `true` as default value would be a breaking change
@@ -188,6 +194,7 @@ export const generate = async (options: GeneratorOptions) => {
     generateFileTypes,
     wrapRelationsAsType,
     showDefaultValues,
+    addGraphqlTypes,
   });
 
   // check for deprecated annotations

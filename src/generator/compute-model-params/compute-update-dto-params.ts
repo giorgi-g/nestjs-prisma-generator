@@ -223,7 +223,7 @@ export const computeUpdateDtoParams = ({
         const includeType = templateHelpers.config.outputApiPropertyType
           ? !overrides.type
           : false;
-        decorators.apiProperties = parseApiProperty(
+        const { apiProperties, gqlProperties } = parseApiProperty(
           {
             ...field,
             ...overrides,
@@ -233,6 +233,8 @@ export const computeUpdateDtoParams = ({
             type: includeType,
           },
         );
+        decorators.apiProperties = apiProperties;
+        decorators.gqlProperties = gqlProperties;
         if (overrides.type && templateHelpers.config.outputApiPropertyType)
           decorators.apiProperties.push({
             name: 'type',

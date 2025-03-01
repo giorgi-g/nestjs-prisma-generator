@@ -1,6 +1,6 @@
 import { DMMF } from '@prisma/generator-helper';
 import { ImportStatementParams, ParsedField } from './types';
-import { decorateApiProperty } from './api-decorator';
+import { decorateApiProperty, decorateField } from './api-decorator';
 import { decorateClassValidators } from './class-validator';
 import { isAnnotatedWith, isType } from './field-classifiers';
 import {
@@ -111,6 +111,7 @@ interface MakeHelpersParam {
   outputApiPropertyType: boolean;
   wrapRelationsAsType: boolean;
   showDefaultValues: boolean;
+  addGraphqlTypes: boolean;
 }
 export const makeHelpers = ({
   connectDtoPrefix,
@@ -225,7 +226,7 @@ export const makeHelpers = ({
     useInputTypes = false,
     forceOptional = false,
   ) =>
-    `${decorateApiProperty(field)}${decorateClassValidators(field)}${
+    `${decorateApiProperty(field)}${decorateField(field)}${decorateClassValidators(field)}${
       field.name
     }${unless(
       field.isRequired && !forceOptional,
