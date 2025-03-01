@@ -255,7 +255,10 @@ export const generateRelationInput = ({
   canDisconnectAnnotation,
 }: GenerateRelationInputParam) => {
   const relationInputClassProps: Array<
-    Pick<ParsedField, 'name' | 'type' | 'apiProperties' | 'gqlProperties' | 'classValidators'>
+    Pick<
+      ParsedField,
+      'name' | 'type' | 'apiProperties' | 'gqlProperties' | 'classValidators'
+    >
   > = [];
 
   const imports: ImportStatementParams[] = [];

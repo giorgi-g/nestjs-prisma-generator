@@ -1,16 +1,26 @@
-name: CI
-on: pull_request
+name: Publish To NPM
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
 jobs:
-  main:
-    name: Pull Requests
+  publish:
+    name: Publish Package to npm
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org/'
       - name: Install dependencies
         run: npm ci
       - name: Run lint
@@ -19,3 +29,7 @@ jobs:
         run: npm run test
       - name: Run generate
         run: npm run generate
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

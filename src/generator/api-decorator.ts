@@ -97,7 +97,7 @@ export const jsonTypeToString = (str: string = ''): string => {
   }
 
   return str;
-}
+};
 
 export const mapToGQLType = (str: string = ''): string => {
   const lwc = str.toLowerCase();
@@ -110,7 +110,7 @@ export const mapToGQLType = (str: string = ''): string => {
   }
 
   return 'String';
-}
+};
 
 /**
  * Parse all types of annotation that can be decorated with `@ApiProperty()`.
@@ -170,14 +170,18 @@ export function parseApiProperty(
 
       gqlProperties.push({
         name: 'type',
-        value: field.isList ? `() => [${mapToGQLType(scalarFormat.type)}]` : `() => ${mapToGQLType(scalarFormat.type)}`,
+        value: field.isList
+          ? `() => [${mapToGQLType(scalarFormat.type)}]`
+          : `() => ${mapToGQLType(scalarFormat.type)}`,
       });
 
       if (scalarFormat.format) {
         properties.push({ name: 'format', value: scalarFormat.format });
         gqlProperties.push({
           name: 'format',
-          value: field.isList ? `() => [${mapToGQLType(scalarFormat.format)}]` : `() => ${mapToGQLType(scalarFormat.format)}`,
+          value: field.isList
+            ? `() => [${mapToGQLType(scalarFormat.format)}]`
+            : `() => ${mapToGQLType(scalarFormat.format)}`,
         });
       }
     } else if (field.kind !== 'enum') {
@@ -189,7 +193,9 @@ export function parseApiProperty(
 
       gqlProperties.push({
         name: 'enum',
-        value: field.isList ? '() => [' + jsonTypeToString(field.type) + ']' : '() => ' + jsonTypeToString(field.type),
+        value: field.isList
+          ? '() => [' + jsonTypeToString(field.type) + ']'
+          : '() => ' + jsonTypeToString(field.type),
         noEncapsulation: true,
       });
     }
@@ -247,21 +253,21 @@ export function decorateField(field: ParsedField): string {
   let decorator = '';
 
   if (field.gqlProperties?.length) {
-    const typeProperty = field.gqlProperties.find(x => x.name === 'type');
-    const enumProperty = field.gqlProperties.find(x => x.name === 'enum');
-    const formatProperty = field.gqlProperties.find(x => x.name === 'format');
+    const typeProperty = field.gqlProperties.find((x) => x.name === 'type');
+    const enumProperty = field.gqlProperties.find((x) => x.name === 'enum');
+    const formatProperty = field.gqlProperties.find((x) => x.name === 'format');
     const type = formatProperty || typeProperty || enumProperty;
 
-    const filteredProps = field.gqlProperties.filter(x => !['dummy', 'type', 'enum', 'format'].includes(x.name));
+    const filteredProps = field.gqlProperties.filter(
+      (x) => !['dummy', 'type', 'enum', 'format'].includes(x.name),
+    );
     const hasOtherProps = filteredProps.length;
 
     decorator += `@Field(${type?.value != null ? `${eval(type.value)}${hasOtherProps ? ', ' : ''}` : ''}${hasOtherProps ? '{\n' : ''}`;
 
     filteredProps.forEach((prop) => {
       decorator += ` ${prop.name}: ${
-        prop.noEncapsulation
-          ? prop.value
-          : encapsulateString(prop.value)
+        prop.noEncapsulation ? prop.value : encapsulateString(prop.value)
       },\n`;
     });
 
@@ -325,7 +331,10 @@ export function makeImportsFromNestjsSwagger(
       destructGqlTypes.push('Float');
     }
 
-    return [{ from: '@nestjs/swagger', destruct }, { from: '@nestjs/graphql', destruct: destructGqlTypes }];
+    return [
+      { from: '@nestjs/swagger', destruct },
+      { from: '@nestjs/graphql', destruct: destructGqlTypes },
+    ];
   }
 
   return [];
