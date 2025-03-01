@@ -53,13 +53,13 @@ model Product {
   /// @ArrayNotEmpty
   /// @MinLength(3)
   tags            String[]      @default(["hello"])
-  /// @DtoCastType(MyType, my-package)
+  /// @DtoOverrideType(MyType, my-package)
   attributes      Json?
-  /// @DtoCastType(SomeType, ../types, CustomType)
+  /// @DtoOverrideType(SomeType, ../types, CustomType)
   someAttributes  Json
-  /// @DtoCastType(OtherType, other-package, default)
+  /// @DtoOverrideType(OtherType, other-package, default)
   otherAttributes Json
-  /// @DtoCastType(OtherType, other-package, default)
+  /// @DtoOverrideType(OtherType, other-package, default)
   finalAttributes Json?
   optAttributes   Json?
   /// @DtoUpdateHidden
