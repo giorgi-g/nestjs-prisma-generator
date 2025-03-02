@@ -320,7 +320,7 @@ export function makeImportsFromNestjsSwagger(
 
   if (hasApiProperty || hasApiHideProperty || apiExtraModels?.length) {
     const destruct: string[] = [];
-    const destructGqlTypes: string[] = ['Field'];
+    const destructGqlTypes: string[] = ['Field', 'InputType', 'ObjectType'];
 
     if (apiExtraModels?.length) destruct.push('ApiExtraModels');
     if (hasApiHideProperty) destruct.push('ApiHideProperty');

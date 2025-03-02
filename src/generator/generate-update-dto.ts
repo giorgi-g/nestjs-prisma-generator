@@ -5,6 +5,7 @@ interface GenerateUpdateDtoParam extends UpdateDtoParams {
   exportRelationModifierClasses: boolean;
   templateHelpers: TemplateHelpers;
 }
+
 export const generateUpdateDto = ({
   model,
   fields,
@@ -13,8 +14,12 @@ export const generateUpdateDto = ({
   apiExtraModels,
   exportRelationModifierClasses,
   templateHelpers: t,
-}: GenerateUpdateDtoParam) => `
-${t.importStatements(imports)}
+}: GenerateUpdateDtoParam) => {
+  const currentImports = t.importStatements(imports);
+  const importsString = currentImports == '' ? null : currentImports;
+
+  return `
+${importsString || ''}
 
 ${t.each(
   extraClasses,
@@ -23,7 +28,9 @@ ${t.each(
 )}
 
 ${t.if(apiExtraModels.length, t.apiExtraModels(apiExtraModels))}
+${importsString != null ? '@InputType()' : ''}
 export ${t.config.outputType} ${t.updateDtoName(model.name)} {
   ${t.fieldsToDtoProps(fields, 'update', true)}
 }
 `;
+};

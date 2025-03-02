@@ -255,7 +255,7 @@ export const makeHelpers = ({
     )}`;
 
   const fieldToEntityProp = (field: ParsedField) =>
-    `${decorateApiProperty(field)}${field.name}${unless(
+    `${decorateApiProperty(field)}${decorateField(field)}${field.name}${unless(
       field.isRequired,
       '?',
       when(definiteAssignmentAssertion, '!'),

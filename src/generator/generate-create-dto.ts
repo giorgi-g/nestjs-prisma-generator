@@ -13,8 +13,12 @@ export const generateCreateDto = ({
   apiExtraModels,
   exportRelationModifierClasses,
   templateHelpers: t,
-}: GenerateCreateDtoParam) => `
-${t.importStatements(imports)}
+}: GenerateCreateDtoParam) => {
+  const currentImports = t.importStatements(imports);
+  const importsString = currentImports == '' ? null : currentImports;
+
+  return `
+${importsString || ''}
 
 ${t.each(
   extraClasses,
@@ -23,7 +27,9 @@ ${t.each(
 )}
 
 ${t.if(apiExtraModels.length, t.apiExtraModels(apiExtraModels))}
+${importsString != null ? '@InputType()' : ''}
 export ${t.config.outputType} ${t.createDtoName(model.name)} {
   ${t.fieldsToDtoProps(fields, 'create', true)}
 }
 `;
+};

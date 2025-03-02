@@ -164,6 +164,8 @@ export const run = ({
       }),
     };
 
+    console.log('>>> createDto', createDto);
+
     // generate update-model.dto.ts
     const updateDto = {
       fileName: path.join(
@@ -242,6 +244,7 @@ export const run = ({
     };
     // TODO generate update-model.struct.ts
 
+    // console.log('>>> modelParams', modelParams);
     // generate model.entity.ts
     const entity = {
       fileName: path.join(
