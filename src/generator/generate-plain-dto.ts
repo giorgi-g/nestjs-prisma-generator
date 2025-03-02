@@ -10,11 +10,17 @@ export const generatePlainDto = ({
   imports,
   apiExtraModels,
   templateHelpers: t,
-}: GenerateEntityParam) => `
-${t.importStatements(imports)}
+}: GenerateEntityParam) => {
+  const currentImports = t.importStatements(imports);
+  const importsString = currentImports == '' ? null : currentImports;
+
+  return `
+${importsString || ''}
 
 ${t.if(apiExtraModels.length, t.apiExtraModels(apiExtraModels))}
+${importsString != null ? '@ObjectType()' : ''}
 export ${t.config.outputType} ${t.plainDtoName(model.name)} {
   ${t.fieldsToEntityProps(fields)}
 }
 `;
+};

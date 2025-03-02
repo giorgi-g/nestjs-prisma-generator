@@ -164,8 +164,6 @@ export const run = ({
       }),
     };
 
-    console.log('>>> createDto', createDto);
-
     // generate update-model.dto.ts
     const updateDto = {
       fileName: path.join(
