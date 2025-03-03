@@ -5,6 +5,7 @@ interface GenerateConnectDtoParam extends ConnectDtoParams {
   exportRelationModifierClasses: boolean;
   templateHelpers: TemplateHelpers;
 }
+
 export const generateConnectDto = ({
   model,
   fields,
@@ -13,17 +14,25 @@ export const generateConnectDto = ({
   apiExtraModels,
   exportRelationModifierClasses,
   templateHelpers: t,
-}: GenerateConnectDtoParam) => `
-${t.importStatements(imports)}
+}: GenerateConnectDtoParam) => {
+  const currentImports = t.importStatements(imports);
+  const importsString = currentImports == '' ? null : currentImports;
+
+  return `
+${importsString || ''}
 
 ${t.each(
   extraClasses,
-  exportRelationModifierClasses ? (content) => `export ${content}` : t.echo,
+  exportRelationModifierClasses
+    ? (content) => `@InputType()\nexport ${content}`
+    : t.echo,
   '\n',
 )}
 
 ${t.if(apiExtraModels.length, t.apiExtraModels(apiExtraModels))}
+${importsString != null ? '@ObjectType()' : ''}
 export ${t.config.outputType} ${t.connectDtoName(model.name)} {
   ${t.fieldsToDtoProps(fields, 'plain', true, false)}
 }
 `;
+};

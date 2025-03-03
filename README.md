@@ -1,4 +1,4 @@
-# Prisma Generator NestJS DTO
+# Prisma Generator NestJS DTO With GQL Types
 
 [![Release](https://badge.fury.io/js/%40brakebein%2Fnestjs-prisma-generator.svg)](https://www.npmjs.com/package/nestjs-prisma-generator)
 [![License](https://img.shields.io/github/license/Brakebein/nestjs-prisma-generator.svg?label=license)](#license)

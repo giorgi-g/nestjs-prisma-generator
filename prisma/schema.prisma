@@ -139,8 +139,9 @@ enum ProductType {
 }
 
 model User {
-  id   String @id
-  name String
+  id     String     @id
+  name   String
+  status UserStatus @default(PENDING)
 
   companyUserRoles CompanyUserRole[]
 }
@@ -195,4 +196,12 @@ model Post {
   /// @DtoUpdateValidateIf(o => o.otherProperty === 'someValue')
   /// @Contains('something')
   exampleUpdate String
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  DELETED
+  PENDING
+  SUSPENDED
 }
