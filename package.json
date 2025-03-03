@@ -1,7 +1,7 @@
 {
   "name": "@rubiconx/nestjs-prisma-generator",
   "description": "Generates DTO and Entity classes for api and graphql from Prisma Schema for NestJS",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "license": "Apache-2.0",
   "author": {
     "name": "Giorgi Gumburashvili",

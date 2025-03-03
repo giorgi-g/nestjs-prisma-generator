@@ -254,6 +254,7 @@ export const run = ({
         templateHelpers,
       }),
     };
+    // console.log('>>> entity', entity);
     // TODO generate model.struct.ts
 
     // generate model.dto.ts

@@ -110,6 +110,7 @@ export interface IApiProperty {
   name: string;
   value: string;
   noEncapsulation?: boolean;
+  base?: string;
 }
 
 export interface IClassValidator {

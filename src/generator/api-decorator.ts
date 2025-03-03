@@ -157,9 +157,11 @@ export function parseApiProperty(
         value: '() => ' + castType,
         noEncapsulation: true,
       });
+      // console.log('>>> castType', castType);
 
       gqlProperties.push({
         name: 'type',
+        base: castType,
         value: field.isList ? '() => [' + castType + ']' : '() => ' + castType,
       });
     } else if (scalarFormat) {
@@ -170,6 +172,7 @@ export function parseApiProperty(
 
       gqlProperties.push({
         name: 'type',
+        base: scalarFormat.type,
         value: field.isList
           ? `() => [${mapToGQLType(scalarFormat.type)}]`
           : `() => ${mapToGQLType(scalarFormat.type)}`,
@@ -179,6 +182,7 @@ export function parseApiProperty(
         properties.push({ name: 'format', value: scalarFormat.format });
         gqlProperties.push({
           name: 'format',
+          base: scalarFormat.format,
           value: field.isList
             ? `() => [${mapToGQLType(scalarFormat.format)}]`
             : `() => ${mapToGQLType(scalarFormat.format)}`,
@@ -250,6 +254,11 @@ export function decorateField(field: ParsedField): string {
     return '@Field()\n';
   }
 
+  const currentType = field?.apiProperties?.find((x) => x?.name === 'type');
+  const isEntity =
+    currentType?.value?.includes('Entity') &&
+    currentType?.value?.includes('() =>');
+
   let decorator = '';
 
   if (field.gqlProperties?.length) {
@@ -263,7 +272,21 @@ export function decorateField(field: ParsedField): string {
     );
     const hasOtherProps = filteredProps.length;
 
-    decorator += `@Field(${type?.value != null ? `${eval(type.value)}${hasOtherProps ? ', ' : ''}` : ''}${hasOtherProps ? '{\n' : ''}`;
+    let typeValue = type?.value;
+
+    if (typeValue != null && isEntity) {
+      if (typeValue.endsWith(']')) {
+        typeValue = typeValue.replace(']', 'Entity]');
+      } else {
+        typeValue = `${typeValue}Entity`;
+      }
+    }
+
+    decorator += `@Field(${typeValue != null ? `${eval(typeValue)}${hasOtherProps ? ', ' : ''}` : ''}${hasOtherProps ? '{\n' : ''}`;
+
+    // if (isEntity) {
+      // console.log('>>> decorator', decorator);
+    // }
 
     filteredProps.forEach((prop) => {
       decorator += ` ${prop.name}: ${
