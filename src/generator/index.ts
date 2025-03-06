@@ -10,7 +10,7 @@ import { generateCreateDto } from './generate-create-dto';
 import { generateUpdateDto } from './generate-update-dto';
 import { generateEntity } from './generate-entity';
 import { generatePlainDto } from './generate-plain-dto';
-import { generateEnums } from './generate-enums';
+import { generateEnums as genEnum } from './generate-enums';
 import { DTO_IGNORE_MODEL } from './annotations';
 import { isAnnotatedWith } from './field-classifiers';
 import { NamingStyle, Model, WriteableFileSpecs } from './types';
@@ -31,6 +31,7 @@ interface RunParam {
   classValidation: boolean;
   outputType: string;
   noDependencies: boolean;
+  generateEnums: boolean;
   definiteAssignmentAssertion: boolean;
   requiredResponseApiProperty: boolean;
   prismaClientImportPath: string;
@@ -54,6 +55,7 @@ export const run = ({
     classValidation,
     outputType,
     noDependencies,
+    generateEnums,
     definiteAssignmentAssertion,
     requiredResponseApiProperty,
     prismaClientImportPath,
@@ -79,6 +81,7 @@ export const run = ({
     classValidation,
     outputType,
     noDependencies,
+    generateEnums,
     definiteAssignmentAssertion,
     outputPath: output,
     prismaClientImportPath,
@@ -89,6 +92,7 @@ export const run = ({
     ...preAndSuffixes,
   });
   const allModels = dmmf.datamodel.models;
+  console.log('>> allModels', dmmf.datamodel.enums[1].values);
 
   const filteredTypes: Model[] = dmmf.datamodel.types
     .filter((model) => !isAnnotatedWith(model, DTO_IGNORE_MODEL))
@@ -132,12 +136,12 @@ export const run = ({
     }));
 
   const enumFiles: WriteableFileSpecs[] = [];
-  if (noDependencies) {
+  if (noDependencies || generateEnums) {
     if (dmmf.datamodel.enums.length) {
       logger('Processing enums');
       enumFiles.push({
         fileName: path.join(output, 'enums.ts'),
-        content: generateEnums(dmmf.datamodel.enums),
+        content: genEnum(dmmf.datamodel.enums),
       });
     }
   }

@@ -19,6 +19,7 @@ generator nestjsDto {
   fileNamingStyle                 = "camel"
   classValidation                 = "true"
   noDependencies                  = "false"
+  generateEnums                   = "true"
   outputType                      = "class"
   prettier                        = "true"
   requiredResponseApiProperty     = "false"

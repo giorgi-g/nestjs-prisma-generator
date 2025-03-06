@@ -44,6 +44,7 @@ generator nestjsDto {
   classValidation                 = "false"
   fileNamingStyle                 = "camel"
   noDependencies                  = "false"
+  generateEnums                   = "true"
   outputType                      = "class"
   definiteAssignmentAssertion     = "false"
   requiredResponseApiProperty     = "true"
@@ -74,6 +75,7 @@ All parameters are optional.
 | `fileNamingStyle = "camel"`                                      | How to name generated files. Valid choices are `"camel"`, `"pascal"`, `"kebab"` and `"snake"`.                                                                                                                       |
 | `classValidation = "false"`                                      | Add validation decorators from `class-validator`. Not compatible with `noDependencies = "true"` and `outputType = "interface"`.                                                                                      |
 | `noDependencies = "false"`                                       | Any imports and decorators that are specific to NestJS and Prisma are omitted, such that there are no references to external dependencies. This is useful if you want to generate appropriate DTOs for the frontend. |
+| `generateEnums = "false"`                                        | Generate enum types `generateEnums = true`                                                                                                                                                                           | 
 | `outputType = "class"`                                           | Output the DTOs as `class` or as `interface`. `interface` should only be used to generate DTOs for the frontend.                                                                                                     |
 | `definiteAssignmentAssertion = "false"`                          | Add a definite assignment assertion operator `!` to required fields, which is required if `strict` and/or `strictPropertyInitialization` is set `true` in your tsconfig.json's `compilerOptions`.                    |
 | `requiredResponseApiProperty = "true"`                           | If `false`, add `@ApiRequired({ required: false })` to response DTO properties. Otherwise, use `required` defaults always to `true` unless field is optional.                                                        |

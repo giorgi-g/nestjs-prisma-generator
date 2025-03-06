@@ -98,6 +98,12 @@ export const generate = async (options: GeneratorOptions) => {
     false,
   );
 
+  const generateEnums = stringToBoolean(
+    options.generator.config.generateEnums,
+    // using `true` as default value would be a breaking change
+    false,
+  );
+
   if (classValidation && outputType !== 'class') {
     throw new Error(
       `To use 'classValidation' decorators, 'outputType' must be 'class'.`,
@@ -185,6 +191,7 @@ export const generate = async (options: GeneratorOptions) => {
     classValidation,
     outputType,
     noDependencies,
+    generateEnums,
     definiteAssignmentAssertion,
     requiredResponseApiProperty,
     prismaClientImportPath,

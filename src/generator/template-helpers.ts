@@ -104,6 +104,7 @@ interface MakeHelpersParam {
   classValidation: boolean;
   outputType: string;
   noDependencies: boolean;
+  generateEnums: boolean;
   definiteAssignmentAssertion: boolean;
   requiredResponseApiProperty: boolean;
   outputPath: string;
@@ -126,6 +127,7 @@ export const makeHelpers = ({
   classValidation,
   outputType,
   noDependencies,
+  generateEnums,
   definiteAssignmentAssertion,
   requiredResponseApiProperty,
   outputPath,
@@ -283,6 +285,7 @@ export const makeHelpers = ({
       classValidation,
       outputType,
       noDependencies,
+      generateEnums,
       definiteAssignmentAssertion,
       requiredResponseApiProperty,
       outputPath,
