@@ -1,4 +1,12 @@
 # Prisma Generator NestJS DTO With GQL Types
+
+1. [What is it?](#what-is-it)
+1. [Usage](#usage)
+1. [Annotations](#annotations)
+1. [Example](#example)
+1. [Principles](#principles)
+1. [License](#license)
+
 ## What is it?
 
 Generates `ConnectDTO`, `CreateDTO`, `UpdateDTO`, `DTO`, and `Entity` classes for models in your Prisma Schema. This is useful if you want to leverage [OpenAPI](https://docs.nestjs.com/openapi/introduction) in your [NestJS](https://nestjs.com/) application - but also helps with GraphQL resources as well). NestJS Swagger requires input parameters in [controllers to be described through classes](https://docs.nestjs.com/openapi/types-and-parameters) because it leverages TypeScript's emitted metadata and `Reflection` to generate models/components for the OpenAPI spec. It does the same for response models/components on your controller methods.
