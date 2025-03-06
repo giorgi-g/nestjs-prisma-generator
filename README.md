@@ -193,7 +193,7 @@ Type validators are inferred from the field's type:
 * `BigInt` &rarr; `@IsInt()`
 * `Float:` &rarr; `@IsNumber()`
 * `Decimal:` &rarr; `@IsDecimal()`
-* `DateTime` &rarr; `@IsString()`
+* `DateTime` &rarr; `@IsDateString()`
 
 All remaining [validation decorators](https://github.com/typestack/class-validator#validation-decorators) can be added in the comment/documentation section above the field.
 The parentheses can be omitted if not passing a value.

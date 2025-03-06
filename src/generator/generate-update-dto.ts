@@ -17,6 +17,12 @@ export const generateUpdateDto = ({
 }: GenerateUpdateDtoParam) => {
   const currentImports = t.importStatements(imports);
   const importsString = currentImports == '' ? null : currentImports;
+  const mappedFields = fields.map((x) => {
+    return {
+      ...x,
+      type: x.type === 'DateTime' ? 'String' : x.type,
+    };
+  });
 
   return `
 ${importsString || ''}
@@ -30,7 +36,7 @@ ${t.each(
 ${t.if(apiExtraModels.length, t.apiExtraModels(apiExtraModels))}
 ${importsString != null ? '@InputType()' : ''}
 export ${t.config.outputType} ${t.updateDtoName(model.name)} {
-  ${t.fieldsToDtoProps(fields, 'update', true)}
+  ${t.fieldsToDtoProps(mappedFields, 'update', true).replace(/date-time/gm, 'string')}
 }
 `;
 };

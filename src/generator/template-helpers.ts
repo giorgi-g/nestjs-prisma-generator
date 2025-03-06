@@ -18,7 +18,7 @@ const PrismaScalarToTypeScript: Record<string, string> = {
   Float: 'number',
   // [Working with Decimal](https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields#working-with-decimal)
   Decimal: 'Prisma.Decimal',
-  DateTime: 'string',
+  DateTime: 'Date',
   // [working with JSON fields](https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields)
   Json: 'Prisma.JsonValue',
   // [Working with Bytes](https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields#working-with-bytes)
@@ -231,7 +231,7 @@ export const makeHelpers = ({
     useInputTypes = false,
     forceOptional = false,
   ) =>
-    `${decorateApiProperty(field)}${decorateField(field)}${decorateClassValidators(field)}${
+    `${decorateApiProperty(field, dtoType)}${decorateField(field, dtoType)}${decorateClassValidators(field)}${
       field.name
     }${unless(
       field.isRequired && !forceOptional,

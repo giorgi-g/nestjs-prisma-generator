@@ -24,7 +24,7 @@ const PrismaScalarToFormat: Record<string, { type: string; format?: string }> =
     BigInt: { type: 'integer', format: 'int64' },
     Float: { type: 'number', format: 'float' },
     Decimal: { type: 'string', format: 'Decimal.js' },
-    DateTime: { type: 'string', format: 'string' },
+    DateTime: { type: 'string', format: 'date-time' },
   };
 
 export function isAnnotatedWithDoc(field: ParsedField): boolean {
@@ -101,7 +101,7 @@ export const jsonTypeToString = (str: string = ''): string => {
 export const mapToGQLType = (str: string = ''): string => {
   const lwc = str.toLowerCase();
   if (lwc === 'date-time') {
-    return 'String';
+    return 'Date';
   } else if (lwc === 'decimal.js' || lwc === 'float' || lwc === 'number') {
     return 'Float';
   } else if (lwc === 'int32' || lwc === 'integer') {
@@ -242,7 +242,7 @@ export function parseApiProperty(
 /**
  * Compose `@Field()` decorator.
  */
-export function decorateField(field: ParsedField): string {
+export function decorateField(field: ParsedField, dtoType?: string): string {
   if (field.apiHideProperty) {
     return '@ApiHideProperty()\n';
   }
@@ -274,6 +274,12 @@ export function decorateField(field: ParsedField): string {
 
     let typeValue = type?.value;
 
+    if (dtoType === 'create' || dtoType === 'update') {
+      if (type?.base === 'date-time') {
+        typeValue = typeValue?.replace('Date', 'String');
+      }
+    }
+
     if (typeValue != null && isEntity) {
       if (typeValue.endsWith(']')) {
         typeValue = typeValue.replace(']', 'Entity]');
@@ -303,7 +309,10 @@ export function decorateField(field: ParsedField): string {
 /**
  * Compose `@ApiProperty()` decorator.
  */
-export function decorateApiProperty(field: ParsedField): string {
+export function decorateApiProperty(
+  field: ParsedField,
+  dtoType?: string,
+): string {
   if (field.apiHideProperty) {
     return '@ApiHideProperty()\n';
   }
@@ -321,9 +330,15 @@ export function decorateApiProperty(field: ParsedField): string {
     decorator += '@ApiProperty({\n';
     field.apiProperties.forEach((prop) => {
       if (prop.name === 'dummy') return;
+      const propValue =
+        (dtoType === 'create' || dtoType === 'update') &&
+        prop?.value === 'date-time'
+          ? 'string'
+          : prop.value;
+
       decorator += `  ${prop.name}: ${
         prop.name === 'enum' || prop.noEncapsulation
-          ? prop.value
+          ? propValue
           : encapsulateString(prop.value)
       },\n`;
     });
