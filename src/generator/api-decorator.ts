@@ -24,7 +24,7 @@ const PrismaScalarToFormat: Record<string, { type: string; format?: string }> =
     BigInt: { type: 'integer', format: 'int64' },
     Float: { type: 'number', format: 'float' },
     Decimal: { type: 'string', format: 'Decimal.js' },
-    DateTime: { type: 'string', format: 'date-time' },
+    DateTime: { type: 'string', format: 'string' },
   };
 
 export function isAnnotatedWithDoc(field: ParsedField): boolean {
@@ -101,7 +101,7 @@ export const jsonTypeToString = (str: string = ''): string => {
 export const mapToGQLType = (str: string = ''): string => {
   const lwc = str.toLowerCase();
   if (lwc === 'date-time') {
-    return 'Date';
+    return 'String';
   } else if (lwc === 'decimal.js' || lwc === 'float' || lwc === 'number') {
     return 'Float';
   } else if (lwc === 'int32' || lwc === 'integer') {

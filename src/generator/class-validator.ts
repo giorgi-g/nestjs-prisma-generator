@@ -129,8 +129,7 @@ const PrismaScalarToValidator: Record<string, IClassValidator> = {
   BigInt: { name: 'IsInt' },
   Float: { name: 'IsNumber' },
   Decimal: { name: 'IsDecimal' },
-  DateTime: { name: 'IsString' },
-  // DateTime: { name: 'IsDateString' },
+  DateTime: { name: 'IsDateString' },
   // Json: { name: 'IsJSON' },
 };
 
