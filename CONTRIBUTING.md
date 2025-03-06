@@ -1,6 +1,6 @@
-# Contributing to nestjs-prisma-generator
+# Contributing to nestjs-prisma-gen
 
-Thanks for contributing to nestjs-prisma-generator!
+Thanks for contributing to nestjs-prisma-gen!
 
 ## License
 

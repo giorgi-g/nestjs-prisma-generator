@@ -9,7 +9,7 @@ generator client {
 
 generator nestjsDto {
   provider                        = "node -r ts-node/register/transpile-only src/cli.ts"
-  output                          = "../src/@generated/nestjs-prisma-generator"
+  output                          = "../src/@generated/nestjs-prisma-gen"
   outputToNestJsResourceStructure = "true"
   flatResourceStructure           = "true"
   exportRelationModifierClasses   = "true"
