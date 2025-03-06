@@ -1,4 +1,4 @@
-import slash from 'slash';
+import { slash } from '../../utils';
 import path from 'node:path';
 import type { DMMF } from '@prisma/generator-helper';
 import { isAnnotatedWith, isId, isUnique } from '../field-classifiers';

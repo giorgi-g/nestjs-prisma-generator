@@ -1,4 +1,4 @@
-import slash from 'slash';
+import { slash } from '../../utils';
 import path from 'node:path';
 import {
   DTO_API_HIDDEN,

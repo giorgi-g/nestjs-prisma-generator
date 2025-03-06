@@ -1,5 +1,5 @@
 import path from 'node:path';
-import slash from 'slash';
+import { slash } from '../utils';
 import {
   isAnnotatedWith,
   isId,

@@ -285,7 +285,7 @@ export function decorateField(field: ParsedField): string {
     decorator += `@Field(${typeValue != null ? `${eval(typeValue)}${hasOtherProps ? ', ' : ''}` : ''}${hasOtherProps ? '{\n' : ''}`;
 
     // if (isEntity) {
-      // console.log('>>> decorator', decorator);
+    // console.log('>>> decorator', decorator);
     // }
 
     filteredProps.forEach((prop) => {

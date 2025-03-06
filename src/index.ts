@@ -1,10 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import {makeDirectory} from 'make-dir';
-import slash from 'slash';
 import { generatorHandler, GeneratorOptions } from '@prisma/generator-helper';
 import prettier from 'prettier';
-import { logger, parseEnvValue, warn } from './utils';
+import { logger, parseEnvValue, warn, slash, makeDirectory } from './utils';
 import { run } from './generator';
 import type { WriteableFileSpecs, NamingStyle } from './generator/types';
 import { isAnnotatedWith } from './generator/field-classifiers';
