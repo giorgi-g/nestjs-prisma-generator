@@ -2,7 +2,6 @@ import { DMMF } from '@prisma/generator-helper';
 import { IApiProperty, ImportStatementParams, ParsedField } from './types';
 import { DTO_OVERRIDE_API_PROPERTY_TYPE } from './annotations';
 import { isAnnotatedWith } from './field-classifiers';
-import { Float, Int } from '@nestjs/graphql';
 
 const ApiProps = [
   'description',
@@ -103,10 +102,12 @@ export const mapToGQLType = (str: string = ''): string => {
   const lwc = str.toLowerCase();
   if (lwc === 'date-time') {
     return 'Date';
-  } else if (lwc === 'decimal.js' || lwc === 'float') {
+  } else if (lwc === 'decimal.js' || lwc === 'float' || lwc === 'number') {
     return 'Float';
-  } else if (lwc === 'int32') {
+  } else if (lwc === 'int32' || lwc === 'integer') {
     return 'Int';
+  } else if (lwc === 'boolean') {
+    return 'Boolean';
   }
 
   return 'String';
@@ -157,7 +158,6 @@ export function parseApiProperty(
         value: '() => ' + castType,
         noEncapsulation: true,
       });
-      // console.log('>>> castType', castType);
 
       gqlProperties.push({
         name: 'type',
@@ -169,6 +169,7 @@ export function parseApiProperty(
         name: 'type',
         value: scalarFormat.type,
       });
+      console.log('>>> scalarFormat', scalarFormat.type, mapToGQLType(scalarFormat.type));
 
       gqlProperties.push({
         name: 'type',
