@@ -426,4 +426,4 @@ This is useful if your response is the plain entity without any (optional) relat
 
 ## License
 
-All files are released under the [Apache License 2.0](https://github.com/giorgi-g/nestjs-prisma-gen/blob/main/LICENSE).
+All files are released under the [Apache License 2.0](https://github.com/giorgi-g/nestjs-prisma-generator/blob/main/LICENSE).
