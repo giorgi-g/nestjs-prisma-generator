@@ -14,7 +14,7 @@ export enum ${pascal(model.name)} {
   ${each(model.values, (v) => `${v.name.toUpperCase()} = '${v.name.toUpperCase()}'\n`, ', ')}
 }
 
-registerEnumType(pascal(model.name), {
+registerEnumType(${pascal(model.name)}, {
     name: "${pascal(model.name)}",
 });
 `;

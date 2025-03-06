@@ -92,7 +92,6 @@ export const run = ({
     ...preAndSuffixes,
   });
   const allModels = dmmf.datamodel.models;
-  console.log('>> allModels', dmmf.datamodel.enums[1].values);
 
   const filteredTypes: Model[] = dmmf.datamodel.types
     .filter((model) => !isAnnotatedWith(model, DTO_IGNORE_MODEL))
