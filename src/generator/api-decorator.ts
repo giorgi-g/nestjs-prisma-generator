@@ -169,7 +169,6 @@ export function parseApiProperty(
         name: 'type',
         value: scalarFormat.type,
       });
-      console.log('>>> scalarFormat', scalarFormat.type, mapToGQLType(scalarFormat.type));
 
       gqlProperties.push({
         name: 'type',

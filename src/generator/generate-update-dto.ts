@@ -18,6 +18,8 @@ export const generateUpdateDto = ({
   const currentImports = t.importStatements(imports);
   const importsString = currentImports == '' ? null : currentImports;
 
+  // const filteredFields = fields.filter((x) => x?.isId !== true);
+
   return `
 ${importsString || ''}
 

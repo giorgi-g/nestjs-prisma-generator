@@ -5,6 +5,7 @@ interface GenerateCreateDtoParam extends CreateDtoParams {
   exportRelationModifierClasses: boolean;
   templateHelpers: TemplateHelpers;
 }
+
 export const generateCreateDto = ({
   model,
   fields,
@@ -16,6 +17,8 @@ export const generateCreateDto = ({
 }: GenerateCreateDtoParam) => {
   const currentImports = t.importStatements(imports);
   const importsString = currentImports == '' ? null : currentImports;
+
+  // const filteredFields = fields.filter((x) => x?.isId !== true);
 
   return `
 ${importsString || ''}

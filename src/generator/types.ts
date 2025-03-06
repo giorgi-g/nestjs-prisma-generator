@@ -14,6 +14,7 @@ export interface ParsedField {
   documentation?: string;
   isRequired: boolean;
   isList: boolean;
+  isId?: boolean;
   /**
    * used when rendering Entity templates - fields that are optional in Prisma Schema
    * are returned as `null` values (if not filled) when fetched from PrismaClient.

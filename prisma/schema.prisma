@@ -144,6 +144,11 @@ model User {
   status UserStatus @default(PENDING)
 
   companyUserRoles CompanyUserRole[]
+  Organisation     Organisation?     @relation(fields: [organisationId], references: [id])
+  /// @DtoRelationIncludeId
+  /// @DtoCreateRequired
+  /// @DtoUpdateRequired
+  organisationId   String?           @db.Uuid
 }
 
 model Role {
@@ -167,6 +172,50 @@ model CompanyUserRole {
   @@id([companyId, userId, roleId])
 }
 
+model Organisation {
+  id      String @id @db.Uuid
+  name    String
+  email   String
+  phone   String
+  address String
+
+  details Json @default("{}") @db.JsonB
+
+  users User[]
+
+  createdAt DateTime @default(now())
+  createdBy String   @db.Uuid
+
+  updatedAt DateTime @updatedAt
+  updatedBy String   @db.Uuid
+  Person    Person[]
+}
+
+model Person {
+  /// @DtoUpdateHidden
+  /// @DtoCreateHidden
+  id             String       @id @db.Uuid
+  firstName      String
+  middleName     String?
+  lastName       String
+  email          String
+  personalId     String?
+  passportNumber String?
+  status         UserStatus   @default(PENDING)
+  birthday       DateTime
+  password       String
+  details        Json         @default("{}") @db.JsonB
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+  organisationId String       @db.Uuid
+  createdAt      DateTime     @default(now())
+  createdBy      String       @db.Uuid
+  updatedAt      DateTime     @updatedAt
+  updatedBy      String       @db.Uuid
+
+  @@unique([email, status])
+  @@index([email])
+}
+
 model Bike {
   id             String    @id @default(uuid())
   chassis_number String
@@ -175,7 +224,9 @@ model Bike {
   vendor         String
   year_from      Int
   year_to        Int
+  isActive       Boolean
   products       Product[]
+  default        Boolean?  @default(false)
 
   @@unique([vendor, chassis_number], map: "My_Bike_Unique")
 }
