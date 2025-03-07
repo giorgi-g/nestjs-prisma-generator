@@ -311,7 +311,11 @@ export function decorateApiProperty(
   field: ParsedField,
   dtoType?: ClassType,
 ): string {
-  if (field.apiHideProperty && field.apiExcludeProperty) {
+  if (
+    field.apiHideProperty &&
+    field.apiExcludeProperty &&
+    dtoType === ClassType.ENTITY
+  ) {
     return '@ApiHideProperty()\n@Exclude({ toPlainOnly: true })\n';
   }
 
@@ -319,7 +323,7 @@ export function decorateApiProperty(
     return '@ApiHideProperty()\n';
   }
 
-  if (field.apiExcludeProperty) {
+  if (field.apiExcludeProperty && dtoType === ClassType.ENTITY) {
     return '@Exclude({ toPlainOnly: true })\n';
   }
 
