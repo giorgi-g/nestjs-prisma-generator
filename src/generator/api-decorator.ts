@@ -290,10 +290,6 @@ export function decorateField(field: ParsedField, dtoType?: string): string {
 
     decorator += `@Field(${typeValue != null ? `${eval(typeValue)}${hasOtherProps ? ', ' : ''}` : ''}${hasOtherProps ? '{\n' : ''}`;
 
-    // if (isEntity) {
-    // console.log('>>> decorator', decorator);
-    // }
-
     filteredProps.forEach((prop) => {
       decorator += ` ${prop.name}: ${
         prop.noEncapsulation ? prop.value : encapsulateString(prop.value)

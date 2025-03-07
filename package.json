@@ -1,7 +1,7 @@
 {
   "name": "@atlas/nestjs-prisma-gen",
   "description": "Generates DTO and Entity classes for API and GraphQL from Prisma Schema for NestJS",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "license": "Apache-2.0",
   "author": {
     "name": "Giorgi Gumburashvili",
@@ -70,7 +70,7 @@
     "graphql": "^16.10.0",
     "graphql-query-complexity": "^0.12.0",
     "prettier": "^3.0.0",
-    "prisma": "^4.16.2",
+    "prisma": "^6.4.1",
     "ts-morph": "^24.0.0"
   },
   "devDependencies": {

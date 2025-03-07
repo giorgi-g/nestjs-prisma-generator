@@ -245,7 +245,6 @@ export const run = ({
     };
     // TODO generate update-model.struct.ts
 
-    // console.log('>>> modelParams', modelParams);
     // generate model.entity.ts
     const entity = {
       fileName: path.join(
@@ -257,7 +256,7 @@ export const run = ({
         templateHelpers,
       }),
     };
-    // console.log('>>> entity', entity);
+
     // TODO generate model.struct.ts
 
     // generate model.dto.ts

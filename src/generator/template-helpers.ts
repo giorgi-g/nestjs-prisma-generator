@@ -208,10 +208,6 @@ export const makeHelpers = ({
 
     const castType = rawCastType ? rawCastType.split(',')[0] : undefined;
 
-    // if (castType) {
-    //   console.log('>>> cast type', field, entityName(field.type));
-    // }
-
     return `${
       castType ||
       (field.kind === 'scalar'
