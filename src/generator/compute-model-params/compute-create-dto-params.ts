@@ -2,13 +2,13 @@ import { slash } from '../../utils';
 import path from 'node:path';
 import {
   DTO_API_HIDDEN,
-  DTO_EXCLUDE_PLAIN_ONLY,
-  DTO_OVERRIDE_API_PROPERTY_TYPE,
   DTO_CAST_TYPE,
   DTO_CREATE_HIDDEN,
   DTO_CREATE_OPTIONAL,
   DTO_CREATE_REQUIRED,
   DTO_CREATE_VALIDATE_IF,
+  DTO_EXCLUDE_PLAIN_ONLY,
+  DTO_OVERRIDE_API_PROPERTY_TYPE,
   DTO_OVERRIDE_TYPE,
   DTO_RELATION_CAN_CONNECT_ON_CREATE,
   DTO_RELATION_CAN_CREATE_ON_CREATE,
@@ -41,12 +41,12 @@ import {
 import type { DMMF } from '@prisma/generator-helper';
 import type { TemplateHelpers } from '../template-helpers';
 import type {
-  Model,
   CreateDtoParams,
-  ImportStatementParams,
-  ParsedField,
   IClassValidator,
   IDecorators,
+  ImportStatementParams,
+  Model,
+  ParsedField,
 } from '../types';
 import {
   makeImportsFromNestjsSwagger,
@@ -62,6 +62,7 @@ interface ComputeCreateDtoParamsParam {
   allModels: Model[];
   templateHelpers: TemplateHelpers;
 }
+
 export const computeCreateDtoParams = ({
   model,
   allModels,
@@ -219,12 +220,12 @@ export const computeCreateDtoParams = ({
     }
 
     if (!templateHelpers.config.noDependencies) {
-      if (isAnnotatedWith(field, DTO_EXCLUDE_PLAIN_ONLY)) {
-        decorators.apiExcludeProperty = true;
-      }
-
-      if (isAnnotatedWith(field, DTO_API_HIDDEN)) {
+      if (
+        isAnnotatedWith(field, DTO_API_HIDDEN) ||
+        isAnnotatedWith(field, DTO_EXCLUDE_PLAIN_ONLY)
+      ) {
         decorators.apiHideProperty = true;
+        decorators.apiExcludeProperty = true;
       } else {
         // If outputApiPropertyType is false, make sure to set includeType false, otherwise use negated overrides.type
         const includeType = templateHelpers.config.outputApiPropertyType

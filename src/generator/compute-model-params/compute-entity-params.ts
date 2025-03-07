@@ -201,12 +201,12 @@ export const computeEntityParams = ({
     }
 
     if (!templateHelpers.config.noDependencies) {
-      if (isAnnotatedWith(field, DTO_EXCLUDE_PLAIN_ONLY)) {
-        decorators.apiExcludeProperty = true;
-      }
-
-      if (isAnnotatedWith(field, DTO_API_HIDDEN)) {
+      if (
+        isAnnotatedWith(field, DTO_API_HIDDEN) ||
+        isAnnotatedWith(field, DTO_EXCLUDE_PLAIN_ONLY)
+      ) {
         decorators.apiHideProperty = true;
+        decorators.apiExcludeProperty = true;
       } else {
         const { apiProperties, gqlProperties } = parseApiProperty(
           {

@@ -2,10 +2,10 @@ import { slash } from '../../utils';
 import path from 'node:path';
 import {
   DTO_API_HIDDEN,
-  DTO_EXCLUDE_PLAIN_ONLY,
-  DTO_OVERRIDE_API_PROPERTY_TYPE,
   DTO_CAST_TYPE,
   DTO_ENTITY_HIDDEN,
+  DTO_EXCLUDE_PLAIN_ONLY,
+  DTO_OVERRIDE_API_PROPERTY_TYPE,
   DTO_OVERRIDE_TYPE,
   DTO_RELATION_INCLUDE_ID,
 } from '../annotations';
@@ -22,11 +22,11 @@ import {
 import type { DMMF } from '@prisma/generator-helper';
 import type { TemplateHelpers } from '../template-helpers';
 import type {
-  Model,
+  IDecorators,
   ImportStatementParams,
+  Model,
   ParsedField,
   PlainDtoParams,
-  IDecorators,
 } from '../types';
 import {
   makeImportsFromNestjsSwagger,
@@ -38,6 +38,7 @@ interface ComputePlainDtoParamsParam {
   allModels: Model[];
   templateHelpers: TemplateHelpers;
 }
+
 export const computePlainDtoParams = ({
   model,
   allModels,
@@ -105,12 +106,12 @@ export const computePlainDtoParams = ({
     }
 
     if (!templateHelpers.config.noDependencies) {
-      if (isAnnotatedWith(field, DTO_EXCLUDE_PLAIN_ONLY)) {
-        decorators.apiExcludeProperty = true;
-      }
-
-      if (isAnnotatedWith(field, DTO_API_HIDDEN)) {
+      if (
+        isAnnotatedWith(field, DTO_API_HIDDEN) ||
+        isAnnotatedWith(field, DTO_EXCLUDE_PLAIN_ONLY)
+      ) {
         decorators.apiHideProperty = true;
+        decorators.apiExcludeProperty = true;
       } else {
         const { apiProperties, gqlProperties } = parseApiProperty(
           {

@@ -245,6 +245,10 @@ export function parseApiProperty(
  * Compose `@Field()` decorator.
  */
 export function decorateField(field: ParsedField, dtoType?: ClassType): string {
+  if (field.apiExcludeProperty) {
+    return '';
+  }
+
   if (
     field.gqlProperties?.length === 1 &&
     field.gqlProperties[0].name === 'dummy'
@@ -286,15 +290,7 @@ export function decorateField(field: ParsedField, dtoType?: ClassType): string {
       }
     }
 
-    let exclude: string = '';
-    if (dtoType === ClassType.ENTITY) {
-      const excluded = field.classValidators?.find((x) => x.name === 'Exclude');
-      if (excluded) {
-        exclude = `@Exclude(${excluded.value})\n`;
-      }
-    }
-
-    decorator += `${exclude}@Field(${typeValue != null ? `${eval(typeValue)}${hasOtherProps ? ', ' : ''}` : ''}${hasOtherProps ? '{\n' : ''}`;
+    decorator += `@Field(${typeValue != null ? `${eval(typeValue)}${hasOtherProps ? ', ' : ''}` : ''}${hasOtherProps ? '{\n' : ''}`;
 
     filteredProps.forEach((prop) => {
       decorator += ` ${prop.name}: ${
@@ -315,8 +311,16 @@ export function decorateApiProperty(
   field: ParsedField,
   dtoType?: ClassType,
 ): string {
+  if (field.apiHideProperty && field.apiExcludeProperty) {
+    return '@ApiHideProperty()\n@Exclude({ toPlainOnly: true })\n';
+  }
+
   if (field.apiHideProperty) {
     return '@ApiHideProperty()\n';
+  }
+
+  if (field.apiExcludeProperty) {
+    return '@Exclude({ toPlainOnly: true })\n';
   }
 
   if (
@@ -357,14 +361,15 @@ export function makeImportsFromNestjsSwagger(
   const hasApiProperty = fields.some((field) => field.apiProperties?.length);
   const hasGqlProperties = fields.some((field) => field.gqlProperties?.length);
   const hasApiHideProperty = fields.some((field) => field.apiHideProperty);
-  // const hasExcludeProperty = fields.some((field) => field.apiExcludeProperty);
+  const hasExcludeProperty = fields.some((field) => field.apiExcludeProperty);
 
   if (hasApiProperty || hasApiHideProperty || apiExtraModels?.length) {
     const destruct: string[] = [];
     const destructGqlTypes: string[] = ['Field', 'InputType', 'ObjectType'];
 
     if (apiExtraModels?.length) destruct.push('ApiExtraModels');
-    if (hasApiHideProperty) destruct.push('ApiHideProperty');
+    if (hasApiHideProperty || hasExcludeProperty)
+      destruct.push('ApiHideProperty');
     if (hasApiProperty) destruct.push('ApiProperty');
     // if (hasExcludeProperty) destruct.push('Exclude');
 

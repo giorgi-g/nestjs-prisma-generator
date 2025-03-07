@@ -204,6 +204,7 @@ model Person {
   passportNumber String?
   status         UserStatus   @default(PENDING)
   birthday       DateTime
+  /// @DtoApiHidden
   /// @DtoExcludePlainOnly
   password       String
   details        Json         @default("{}") @db.JsonB

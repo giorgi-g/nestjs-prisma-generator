@@ -2,8 +2,8 @@ import path from 'node:path';
 import { slash } from '../../utils';
 import {
   DTO_API_HIDDEN,
-  DTO_EXCLUDE_PLAIN_ONLY,
   DTO_CAST_TYPE,
+  DTO_EXCLUDE_PLAIN_ONLY,
   DTO_OVERRIDE_API_PROPERTY_TYPE,
   DTO_OVERRIDE_TYPE,
   DTO_RELATION_CAN_CONNECT_ON_UPDATE,
@@ -218,12 +218,12 @@ export const computeUpdateDtoParams = ({
     }
 
     if (!templateHelpers.config.noDependencies) {
-      if (isAnnotatedWith(field, DTO_EXCLUDE_PLAIN_ONLY)) {
-        decorators.apiExcludeProperty = true;
-      }
-
-      if (isAnnotatedWith(field, DTO_API_HIDDEN)) {
+      if (
+        isAnnotatedWith(field, DTO_API_HIDDEN) ||
+        isAnnotatedWith(field, DTO_EXCLUDE_PLAIN_ONLY)
+      ) {
         decorators.apiHideProperty = true;
+        decorators.apiExcludeProperty = true;
       } else {
         // If outputApiPropertyType is false, make sure to set includeType false, otherwise use negated overrides.type
         const includeType = templateHelpers.config.outputApiPropertyType
