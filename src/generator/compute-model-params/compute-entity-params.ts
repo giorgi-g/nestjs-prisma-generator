@@ -2,9 +2,10 @@ import path from 'node:path';
 import { slash } from '../../utils';
 import {
   DTO_API_HIDDEN,
-  DTO_OVERRIDE_API_PROPERTY_TYPE,
   DTO_CAST_TYPE,
   DTO_ENTITY_HIDDEN,
+  DTO_EXCLUDE_PLAIN_ONLY,
+  DTO_OVERRIDE_API_PROPERTY_TYPE,
   DTO_OVERRIDE_TYPE,
   DTO_RELATION_REQUIRED,
 } from '../annotations';
@@ -15,6 +16,7 @@ import {
   isType,
 } from '../field-classifiers';
 import {
+  concatUniqueIntoArray,
   getRelationScalars,
   getRelativePath,
   makeCustomImports,
@@ -25,29 +27,36 @@ import {
 
 import type { DMMF } from '@prisma/generator-helper';
 import type {
-  Model,
   EntityParams,
-  ImportStatementParams,
-  ParsedField,
+  IClassValidator,
   IDecorators,
+  ImportStatementParams,
+  Model,
+  ParsedField,
 } from '../types';
 import type { TemplateHelpers } from '../template-helpers';
 import {
   makeImportsFromNestjsSwagger,
   parseApiProperty,
 } from '../api-decorator';
+import {
+  makeImportsFromClassValidator,
+  parseClassValidators,
+} from '../class-validator';
 
 interface ComputeEntityParamsParam {
   model: Model;
   allModels: Model[];
   templateHelpers: TemplateHelpers;
 }
+
 export const computeEntityParams = ({
   model,
   allModels,
   templateHelpers,
 }: ComputeEntityParamsParam): EntityParams => {
   const imports: ImportStatementParams[] = [];
+  const classValidators: IClassValidator[] = [];
   const apiExtraModels: string[] = [];
 
   const relationScalarFields = getRelationScalars(model.fields);
@@ -100,6 +109,27 @@ export const computeEntityParams = ({
           from: importFrom,
         });
       }
+    }
+
+    if (templateHelpers.config.classValidation) {
+      if (isAnnotatedWith(field, DTO_EXCLUDE_PLAIN_ONLY)) {
+        overrides.documentation = (
+          overrides.documentation ?? field.documentation
+        )?.replace(DTO_EXCLUDE_PLAIN_ONLY, '@Exclude({ toPlainOnly: true })');
+      }
+
+      decorators.classValidators = parseClassValidators(
+        {
+          ...field,
+          ...overrides,
+        },
+        overrides.type || templateHelpers.createDtoName,
+      );
+      concatUniqueIntoArray(
+        decorators.classValidators,
+        classValidators,
+        'name',
+      );
     }
 
     // relation fields are never required in an entity.
@@ -171,6 +201,10 @@ export const computeEntityParams = ({
     }
 
     if (!templateHelpers.config.noDependencies) {
+      if (isAnnotatedWith(field, DTO_EXCLUDE_PLAIN_ONLY)) {
+        decorators.apiExcludeProperty = true;
+      }
+
       if (isAnnotatedWith(field, DTO_API_HIDDEN)) {
         decorators.apiHideProperty = true;
       } else {
@@ -232,6 +266,7 @@ export const computeEntityParams = ({
     fields,
     apiExtraModels,
   );
+  const importClassValidator = makeImportsFromClassValidator(classValidators);
   const customImports = makeCustomImports(fields);
 
   return {
@@ -240,6 +275,7 @@ export const computeEntityParams = ({
     imports: zipImportStatementParams([
       ...importPrismaClient,
       ...importNestjsSwagger,
+      ...importClassValidator,
       ...customImports,
       ...imports,
     ]),

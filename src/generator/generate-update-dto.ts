@@ -1,5 +1,6 @@
 import type { TemplateHelpers } from './template-helpers';
 import type { UpdateDtoParams } from './types';
+import { ClassType } from '../enums';
 
 interface GenerateUpdateDtoParam extends UpdateDtoParams {
   exportRelationModifierClasses: boolean;
@@ -36,7 +37,7 @@ ${t.each(
 ${t.if(apiExtraModels.length, t.apiExtraModels(apiExtraModels))}
 ${importsString != null ? '@InputType()' : ''}
 export ${t.config.outputType} ${t.updateDtoName(model.name)} {
-  ${t.fieldsToDtoProps(mappedFields, 'update', true).replace(/date-time/gm, 'string')}
+  ${t.fieldsToDtoProps(mappedFields, ClassType.UPDATE, true).replace(/date-time/gm, 'string')}
 }
 `;
 };

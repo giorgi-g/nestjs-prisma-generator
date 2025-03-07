@@ -8,6 +8,7 @@ import {
   DTO_OVERRIDE_TYPE,
   DTO_TYPE_FULL_UPDATE,
 } from './annotations';
+import { ClassType } from '../enums';
 
 const PrismaScalarToTypeScript: Record<string, string> = {
   String: 'string',
@@ -160,11 +161,11 @@ export const makeHelpers = ({
   const updateDtoName = (name: string) =>
     className(name, updateDtoPrefix, dtoSuffix);
   const plainDtoName = (name: string) => className(name, '', dtoSuffix);
-  const dtoName = (name: string, dtoType: 'create' | 'update' | 'plain') => {
+  const dtoName = (name: string, dtoType: ClassType) => {
     switch (dtoType) {
-      case 'create':
+      case ClassType.CREATE:
         return createDtoName(name);
-      case 'update':
+      case ClassType.UPDATE:
         return updateDtoName(name);
       default:
         return plainDtoName(name);
@@ -188,11 +189,11 @@ export const makeHelpers = ({
 
   const fieldType = (
     field: ParsedField,
-    dtoType: 'create' | 'update' | 'plain' = 'plain',
+    dtoType: ClassType = ClassType.PLAIN,
     toInputType = false,
   ) => {
     const doFullUpdate =
-      dtoType === 'update' &&
+      dtoType === ClassType.UPDATE &&
       isType(field as DMMF.Field) &&
       isAnnotatedWith(field as DMMF.Field, DTO_TYPE_FULL_UPDATE);
 
@@ -218,14 +219,16 @@ export const makeHelpers = ({
           ? field.type
           : (field.relationName
               ? entityName(field.type)
-              : dtoName(field.type, doFullUpdate ? 'create' : dtoType)) +
-            when(wrapRelationsAsType, 'AsType'))
+              : dtoName(
+                  field.type,
+                  doFullUpdate ? ClassType.CREATE : dtoType,
+                )) + when(wrapRelationsAsType, 'AsType'))
     }${when(field.isList, '[]')}`;
   };
 
   const fieldToDtoProp = (
     field: ParsedField,
-    dtoType: 'create' | 'update' | 'plain',
+    dtoType: ClassType,
     useInputTypes = false,
     forceOptional = false,
   ) =>
@@ -247,7 +250,7 @@ export const makeHelpers = ({
 
   const fieldsToDtoProps = (
     fields: ParsedField[],
-    dtoType: 'create' | 'update' | 'plain',
+    dtoType: ClassType,
     useInputTypes = false,
     forceOptional = false,
   ) =>
@@ -258,7 +261,7 @@ export const makeHelpers = ({
     )}`;
 
   const fieldToEntityProp = (field: ParsedField) =>
-    `${decorateApiProperty(field)}${decorateField(field)}${field.name}${unless(
+    `${decorateApiProperty(field, ClassType.ENTITY)}${decorateField(field, ClassType.ENTITY)}${field.name}${unless(
       field.isRequired,
       '?',
       when(definiteAssignmentAssertion, '!'),

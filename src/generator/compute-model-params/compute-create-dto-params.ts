@@ -2,6 +2,7 @@ import { slash } from '../../utils';
 import path from 'node:path';
 import {
   DTO_API_HIDDEN,
+  DTO_EXCLUDE_PLAIN_ONLY,
   DTO_OVERRIDE_API_PROPERTY_TYPE,
   DTO_CAST_TYPE,
   DTO_CREATE_HIDDEN,
@@ -202,6 +203,7 @@ export const computeCreateDtoParams = ({
           overrides.documentation ?? field.documentation
         )?.replace(DTO_CREATE_VALIDATE_IF, '@ValidateIf');
       }
+
       decorators.classValidators = parseClassValidators(
         {
           ...field,
@@ -217,6 +219,10 @@ export const computeCreateDtoParams = ({
     }
 
     if (!templateHelpers.config.noDependencies) {
+      if (isAnnotatedWith(field, DTO_EXCLUDE_PLAIN_ONLY)) {
+        decorators.apiExcludeProperty = true;
+      }
+
       if (isAnnotatedWith(field, DTO_API_HIDDEN)) {
         decorators.apiHideProperty = true;
       } else {

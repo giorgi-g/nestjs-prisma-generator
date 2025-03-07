@@ -1,5 +1,6 @@
 import type { TemplateHelpers } from './template-helpers';
 import type { ConnectDtoParams } from './types';
+import { ClassType } from '../enums';
 
 interface GenerateConnectDtoParam extends ConnectDtoParams {
   exportRelationModifierClasses: boolean;
@@ -32,7 +33,7 @@ ${t.each(
 ${t.if(apiExtraModels.length, t.apiExtraModels(apiExtraModels))}
 ${importsString != null ? '@ObjectType()' : ''}
 export ${t.config.outputType} ${t.connectDtoName(model.name)} {
-  ${t.fieldsToDtoProps(fields, 'plain', true, false)}
+  ${t.fieldsToDtoProps(fields, ClassType.PLAIN, true, false)}
 }
 `;
 };

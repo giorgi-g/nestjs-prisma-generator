@@ -1,5 +1,6 @@
 import type { TemplateHelpers } from './template-helpers';
 import type { CreateDtoParams } from './types';
+import { ClassType } from '../enums';
 
 interface GenerateCreateDtoParam extends CreateDtoParams {
   exportRelationModifierClasses: boolean;
@@ -36,7 +37,7 @@ ${t.each(
 ${t.if(apiExtraModels.length, t.apiExtraModels(apiExtraModels))}
 ${importsString != null ? '@InputType()' : ''}
 export ${t.config.outputType} ${t.createDtoName(model.name)} {
-  ${t.fieldsToDtoProps(mappedFields, 'create', true).replace(/date-time/gm, 'string')}
+  ${t.fieldsToDtoProps(mappedFields, ClassType.CREATE, true).replace(/date-time/gm, 'string')}
 }
 `;
 };

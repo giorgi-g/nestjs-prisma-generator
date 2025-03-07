@@ -6,10 +6,10 @@ import {
   isRelation,
   isUnique,
 } from './field-classifiers';
+import type { TemplateHelpers } from './template-helpers';
 import { scalarToTS } from './template-helpers';
 
 import type { DMMF } from '@prisma/generator-helper';
-import type { TemplateHelpers } from './template-helpers';
 import type {
   IApiProperty,
   IClassValidator,
@@ -21,10 +21,11 @@ import type {
 import { parseApiProperty } from './api-decorator';
 import { parseClassValidators } from './class-validator';
 import {
-  DTO_OVERRIDE_API_PROPERTY_TYPE,
   DTO_CAST_TYPE,
+  DTO_OVERRIDE_API_PROPERTY_TYPE,
   DTO_OVERRIDE_TYPE,
 } from './annotations';
+import { ClassType } from '../enums';
 
 export const uniq = <T = any>(input: T[]): T[] => Array.from(new Set(input));
 export const concatIntoArray = <T = any>(source: T[], target: T[]) =>
@@ -348,12 +349,14 @@ export const generateRelationInput = ({
         value: castApiType ? '() => ' + castApiType : preAndPostfixedName,
         noEncapsulation: true,
       });
-      if (field.isList)
+
+      if (field.isList) {
         decorators.apiProperties.push({ name: 'isArray', value: 'true' });
+      }
     }
 
     relationInputClassProps.push({
-      name: 'create',
+      name: ClassType.CREATE,
       type: castType || preAndPostfixedName,
       apiProperties: decorators.apiProperties,
       gqlProperties: decorators.gqlProperties,
@@ -411,6 +414,7 @@ export const generateRelationInput = ({
         value: castApiType ? '() => ' + castApiType : preAndPostfixedName,
         noEncapsulation: true,
       });
+
       if (field.isList)
         decorators.apiProperties.push({ name: 'isArray', value: 'true' });
     }
@@ -572,7 +576,7 @@ export const generateRelationInput = ({
         isRequired: relationInputClassProps.length === 1,
         isList: field.isList,
       })),
-      'plain',
+      ClassType.PLAIN,
       true,
     )}
   }`);
@@ -661,7 +665,7 @@ export const generateUniqueInput = ({
   generatedClasses.push(`${
     t.config.outputType
   } ${preAndPostfixedInputClassName} {
-    ${t.fieldsToDtoProps(parsedFields, 'plain', true)}
+    ${t.fieldsToDtoProps(parsedFields, ClassType.PLAIN, true)}
   }`);
 
   apiExtraModels.push(preAndPostfixedInputClassName);

@@ -2,6 +2,7 @@ import { slash } from '../../utils';
 import path from 'node:path';
 import {
   DTO_API_HIDDEN,
+  DTO_EXCLUDE_PLAIN_ONLY,
   DTO_OVERRIDE_API_PROPERTY_TYPE,
   DTO_CAST_TYPE,
   DTO_ENTITY_HIDDEN,
@@ -104,6 +105,10 @@ export const computePlainDtoParams = ({
     }
 
     if (!templateHelpers.config.noDependencies) {
+      if (isAnnotatedWith(field, DTO_EXCLUDE_PLAIN_ONLY)) {
+        decorators.apiExcludeProperty = true;
+      }
+
       if (isAnnotatedWith(field, DTO_API_HIDDEN)) {
         decorators.apiHideProperty = true;
       } else {

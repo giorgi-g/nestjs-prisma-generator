@@ -105,6 +105,7 @@ const validatorsWithParams = new Map<string, string>([
   ['IsStrongPassword', '{}'],
   ['IsInstance', "''"],
   ['ValidateIf', ''],
+  ['Exclude', '{ toPlainOnly: true }'],
 ]);
 
 const arrayValidators = [
@@ -210,6 +211,8 @@ export function parseClassValidators(
     validators.push({ name: 'IsArray' });
   }
 
+  // console.log('>>> field', field);
+
   if (isType(field) || isRelation(field)) {
     const nestedValidator: IClassValidator = { name: 'ValidateNested' };
     optEach(nestedValidator, field.isList);
@@ -283,7 +286,7 @@ export function makeImportsFromClassValidator(
   const transformer = new Set<string>();
 
   classValidators?.forEach((cv) => {
-    if (cv.name === 'Type') {
+    if (cv.name === 'Type' || cv.name === 'Exclude') {
       transformer.add(cv.name);
     } else {
       validator.add(cv.name);

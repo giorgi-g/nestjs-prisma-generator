@@ -2,8 +2,9 @@ import path from 'node:path';
 import { slash } from '../../utils';
 import {
   DTO_API_HIDDEN,
-  DTO_OVERRIDE_API_PROPERTY_TYPE,
+  DTO_EXCLUDE_PLAIN_ONLY,
   DTO_CAST_TYPE,
+  DTO_OVERRIDE_API_PROPERTY_TYPE,
   DTO_OVERRIDE_TYPE,
   DTO_RELATION_CAN_CONNECT_ON_UPDATE,
   DTO_RELATION_CAN_CREATE_ON_UPDATE,
@@ -62,6 +63,7 @@ interface ComputeUpdateDtoParamsParam {
   allModels: Model[];
   templateHelpers: TemplateHelpers;
 }
+
 export const computeUpdateDtoParams = ({
   model,
   allModels,
@@ -216,6 +218,10 @@ export const computeUpdateDtoParams = ({
     }
 
     if (!templateHelpers.config.noDependencies) {
+      if (isAnnotatedWith(field, DTO_EXCLUDE_PLAIN_ONLY)) {
+        decorators.apiExcludeProperty = true;
+      }
+
       if (isAnnotatedWith(field, DTO_API_HIDDEN)) {
         decorators.apiHideProperty = true;
       } else {

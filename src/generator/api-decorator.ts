@@ -2,6 +2,7 @@ import { DMMF } from '@prisma/generator-helper';
 import { IApiProperty, ImportStatementParams, ParsedField } from './types';
 import { DTO_OVERRIDE_API_PROPERTY_TYPE } from './annotations';
 import { isAnnotatedWith } from './field-classifiers';
+import { ClassType } from '../enums';
 
 const ApiProps = [
   'description',
@@ -134,6 +135,7 @@ export function parseApiProperty(
     type: true,
     ...include,
   };
+
   const properties: IApiProperty[] = [];
   const gqlProperties: IApiProperty[] = [];
 
@@ -242,11 +244,7 @@ export function parseApiProperty(
 /**
  * Compose `@Field()` decorator.
  */
-export function decorateField(field: ParsedField, dtoType?: string): string {
-  if (field.apiHideProperty) {
-    return '@ApiHideProperty()\n';
-  }
-
+export function decorateField(field: ParsedField, dtoType?: ClassType): string {
   if (
     field.gqlProperties?.length === 1 &&
     field.gqlProperties[0].name === 'dummy'
@@ -274,7 +272,7 @@ export function decorateField(field: ParsedField, dtoType?: string): string {
 
     let typeValue = type?.value;
 
-    if (dtoType === 'create' || dtoType === 'update') {
+    if (dtoType === ClassType.CREATE || dtoType === ClassType.UPDATE) {
       if (type?.base === 'date-time') {
         typeValue = typeValue?.replace('Date', 'String');
       }
@@ -288,7 +286,15 @@ export function decorateField(field: ParsedField, dtoType?: string): string {
       }
     }
 
-    decorator += `@Field(${typeValue != null ? `${eval(typeValue)}${hasOtherProps ? ', ' : ''}` : ''}${hasOtherProps ? '{\n' : ''}`;
+    let exclude: string = '';
+    if (dtoType === ClassType.ENTITY) {
+      const excluded = field.classValidators?.find((x) => x.name === 'Exclude');
+      if (excluded) {
+        exclude = `@Exclude(${excluded.value})\n`;
+      }
+    }
+
+    decorator += `${exclude}@Field(${typeValue != null ? `${eval(typeValue)}${hasOtherProps ? ', ' : ''}` : ''}${hasOtherProps ? '{\n' : ''}`;
 
     filteredProps.forEach((prop) => {
       decorator += ` ${prop.name}: ${
@@ -307,7 +313,7 @@ export function decorateField(field: ParsedField, dtoType?: string): string {
  */
 export function decorateApiProperty(
   field: ParsedField,
-  dtoType?: string,
+  dtoType?: ClassType,
 ): string {
   if (field.apiHideProperty) {
     return '@ApiHideProperty()\n';
@@ -327,7 +333,7 @@ export function decorateApiProperty(
     field.apiProperties.forEach((prop) => {
       if (prop.name === 'dummy') return;
       const propValue =
-        (dtoType === 'create' || dtoType === 'update') &&
+        (dtoType === ClassType.CREATE || dtoType === ClassType.UPDATE) &&
         prop?.value === 'date-time'
           ? 'string'
           : prop.value;
@@ -351,6 +357,7 @@ export function makeImportsFromNestjsSwagger(
   const hasApiProperty = fields.some((field) => field.apiProperties?.length);
   const hasGqlProperties = fields.some((field) => field.gqlProperties?.length);
   const hasApiHideProperty = fields.some((field) => field.apiHideProperty);
+  // const hasExcludeProperty = fields.some((field) => field.apiExcludeProperty);
 
   if (hasApiProperty || hasApiHideProperty || apiExtraModels?.length) {
     const destruct: string[] = [];
@@ -359,6 +366,7 @@ export function makeImportsFromNestjsSwagger(
     if (apiExtraModels?.length) destruct.push('ApiExtraModels');
     if (hasApiHideProperty) destruct.push('ApiHideProperty');
     if (hasApiProperty) destruct.push('ApiProperty');
+    // if (hasExcludeProperty) destruct.push('Exclude');
 
     if (hasGqlProperties) {
       destructGqlTypes.push('Int');

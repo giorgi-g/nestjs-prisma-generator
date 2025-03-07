@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://johndoe:mypassword@localhost:5432/mydb?schema=public"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -204,6 +204,7 @@ model Person {
   passportNumber String?
   status         UserStatus   @default(PENDING)
   birthday       DateTime
+  /// @DtoExcludePlainOnly
   password       String
   details        Json         @default("{}") @db.JsonB
   organisation   Organisation @relation(fields: [organisationId], references: [id])
