@@ -11,6 +11,7 @@ import {
 } from '../annotations';
 import { isAnnotatedWith, isRelation, isType } from '../field-classifiers';
 import {
+  concatUniqueIntoArray,
   getRelationScalars,
   getRelativePath,
   makeCustomImports,
@@ -22,6 +23,7 @@ import {
 import type { DMMF } from '@prisma/generator-helper';
 import type { TemplateHelpers } from '../template-helpers';
 import type {
+  IClassValidator,
   IDecorators,
   ImportStatementParams,
   Model,
@@ -32,6 +34,10 @@ import {
   makeImportsFromNestjsSwagger,
   parseApiProperty,
 } from '../api-decorator';
+import {
+  makeImportsFromClassValidator,
+  parseClassValidators,
+} from '../class-validator';
 
 interface ComputePlainDtoParamsParam {
   model: Model;
@@ -45,6 +51,7 @@ export const computePlainDtoParams = ({
   templateHelpers,
 }: ComputePlainDtoParamsParam): PlainDtoParams => {
   const imports: ImportStatementParams[] = [];
+  const classValidators: IClassValidator[] = [];
   const apiExtraModels: string[] = [];
 
   const relationScalarFields = getRelationScalars(model.fields);
@@ -103,6 +110,27 @@ export const computePlainDtoParams = ({
           from: importFrom,
         });
       }
+    }
+
+    if (templateHelpers.config.classValidation) {
+      if (isAnnotatedWith(field, DTO_EXCLUDE_PLAIN_ONLY)) {
+        overrides.documentation = (
+          overrides.documentation ?? field.documentation
+        )?.replace(DTO_EXCLUDE_PLAIN_ONLY, '@Exclude({ toPlainOnly: true })');
+      }
+
+      decorators.classValidators = parseClassValidators(
+        {
+          ...field,
+          ...overrides,
+        },
+        overrides.type || templateHelpers.createDtoName,
+      );
+      concatUniqueIntoArray(
+        decorators.classValidators,
+        classValidators,
+        'name',
+      );
     }
 
     if (!templateHelpers.config.noDependencies) {
@@ -169,6 +197,7 @@ export const computePlainDtoParams = ({
     fields,
     apiExtraModels,
   );
+  const importClassValidator = makeImportsFromClassValidator(classValidators);
   const customImports = makeCustomImports(fields);
 
   return {
@@ -177,6 +206,7 @@ export const computePlainDtoParams = ({
     imports: zipImportStatementParams([
       ...importPrismaClient,
       ...importNestjsSwagger,
+      ...importClassValidator,
       ...customImports,
       ...imports,
     ]),
