@@ -5,11 +5,13 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+
+  output = "../src/prisma-client"
 }
 
 generator nestjsDto {
   provider                        = "node -r ts-node/register/transpile-only src/cli.ts"
-  output                          = "../src/@generated/nestjs-prisma-gen"
+  output                          = "../src/@generated"
   outputToNestJsResourceStructure = "true"
   flatResourceStructure           = "true"
   exportRelationModifierClasses   = "true"

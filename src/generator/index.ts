@@ -140,7 +140,7 @@ export const run = ({
       logger('Processing enums');
       enumFiles.push({
         fileName: path.join(output, 'enums.ts'),
-        content: genEnum(dmmf.datamodel.enums),
+        content: genEnum(dmmf.datamodel.enums, prismaClientImportPath),
       });
     }
   }

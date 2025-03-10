@@ -6,3 +6,4 @@ dist
 
 # IDE settings
 .idea
+/src/prisma-client
