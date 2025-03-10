@@ -154,6 +154,7 @@ export function parseApiProperty(
     });
     const castType = rawCastType ? rawCastType.split(',')[0] : undefined;
     const scalarFormat = PrismaScalarToFormat[field.type];
+
     if (castType) {
       properties.push({
         name: 'type',
@@ -213,6 +214,14 @@ export function parseApiProperty(
   if (incl.enum && field.kind === 'enum') {
     properties.push({ name: 'enum', value: field.type });
     properties.push({ name: 'enumName', value: field.type });
+
+    gqlProperties.push({
+      name: 'enum',
+      value: field.isList
+        ? '() => [' + field.type + ']'
+        : '() => ' + field.type,
+      noEncapsulation: true,
+    });
   }
 
   const defaultValue = getDefaultValue(field);

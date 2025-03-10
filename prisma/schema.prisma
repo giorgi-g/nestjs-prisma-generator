@@ -207,6 +207,7 @@ model Person {
   /// @DtoApiHidden
   /// @DtoExcludePlainOnly
   password       String
+  position       Position[]   @default([HIDDEN])
   details        Json         @default("{}") @db.JsonB
   organisation   Organisation @relation(fields: [organisationId], references: [id])
   organisationId String       @db.Uuid
@@ -258,4 +259,14 @@ enum UserStatus {
   DELETED
   PENDING
   SUSPENDED
+}
+
+enum Position {
+  TOP
+  HEADER
+  MAIN
+  SIDEBAR
+  FOOTER
+  BOTTOM
+  HIDDEN
 }
