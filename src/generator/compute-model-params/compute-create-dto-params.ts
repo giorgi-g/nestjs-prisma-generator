@@ -79,6 +79,7 @@ export const computeCreateDtoParams = ({
     const overrides: Partial<DMMF.Field> = {};
     const decorators: IDecorators = {};
 
+
     if (
       isAnnotatedWith(field, DTO_RELATION_INCLUDE_ID) &&
       relationScalarFieldNames.includes(name)
@@ -142,12 +143,14 @@ export const computeCreateDtoParams = ({
     if (!isDtoOptional) {
       if (isIdWithDefaultValue(field)) return result;
       if (isUpdatedAt(field)) return result;
-      if (isRequiredWithDefaultValue(field)) {
+
+      if (isRequiredWithDefaultValue(field) && field.kind !== 'enum') {
         if (templateHelpers.config.showDefaultValues)
           overrides.isRequired = false;
         else return result;
       }
     }
+
     if (isDtoOptional) {
       overrides.isRequired = false;
     }
