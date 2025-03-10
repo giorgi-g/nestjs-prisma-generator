@@ -2,16 +2,21 @@ import { DMMF } from '@prisma/generator-helper';
 import { camel, pascal } from 'case';
 import { each } from './template-helpers';
 
-export const generateEnums = (
-  enumModels: DMMF.DatamodelEnum[],
-) => `import { registerEnumType } from "@nestjs/graphql";
+export const generateEnums = (enumModels: DMMF.DatamodelEnum[]) => {
+  const enumsList = enumModels.map((x) => x.name);
+  const enumImports = enumsList.length
+    ? `import { ${enumsList.join(', ')} } from "@prisma/client";`
+    : '';
+  console.log('Generate enums for enums...', enumImports);
+  return `import { registerEnumType } from "@nestjs/graphql";
+${enumImports}
 ${each(
   enumModels,
   (model) => {
     return `
 export const ${camel(model.name)} = [${each(model.values, (v) => `'${v.name}'`, ', ')}] as const;
 
-export enum ${pascal(model.name)} {
+export enum ${pascal(model.name)}Enum {
   ${each(model.values, (v) => `${v.name.toUpperCase()} = '${v.name.toUpperCase()}'\n`, ', ')}
 }
 
@@ -23,3 +28,4 @@ registerEnumType(${pascal(model.name)}, {
   '\n',
 )}
 `;
+};
