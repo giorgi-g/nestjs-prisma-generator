@@ -32,7 +32,6 @@ export const computeTypeParams = ({
   }),
   input: computeInputParams({
     model,
-    allModels,
     templateHelpers,
   }),
 });

@@ -42,7 +42,6 @@ export const computeModelParams = ({
   }),
   input: computeInputParams({
     model,
-    allModels,
     templateHelpers,
   }),
 });

@@ -40,13 +40,11 @@ import {
 
 interface ComputeInputParamsParam {
   model: Model;
-  allModels: Model[];
   templateHelpers: TemplateHelpers;
 }
 
 export const computeInputParams = ({
   model,
-  allModels,
   templateHelpers,
 }: ComputeInputParamsParam): InputParams => {
   const imports: ImportStatementParams[] = [];
@@ -55,7 +53,11 @@ export const computeInputParams = ({
   const classValidators: IClassValidator[] = [];
 
   const primitiveFields = model.fields
-    .filter((x) => ['enum', 'scalar'].includes(x.kind) && x.type !== 'Json')
+    .filter((x) => ['enum', 'scalar'].includes(x.kind))
+    .filter((x) => x.type !== 'Json')
+    .filter((x) =>
+      ['size', 'page', 'totalItems', 'totalPages'].includes(x.name),
+    )
     .map((x) => ({
       ...x,
       isRequired: false,
