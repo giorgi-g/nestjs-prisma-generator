@@ -74,7 +74,6 @@ export const computeInputParams = ({
   ];
 
   const fields = allFields.reduce((result, field) => {
-    console.log('>>> field', field);
     const overrides: Partial<DMMF.Field> = {};
     const decorators: IDecorators = {};
 

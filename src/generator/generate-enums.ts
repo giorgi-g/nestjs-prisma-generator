@@ -13,7 +13,7 @@ export const generateEnums = (
   const enumImports = enumsList.length
     ? `import { ${enumsList.join(', ')} } from "${prismaImportPath}";`
     : '';
-  console.log('Generate enums for enums...', enumImports);
+
   return `import { registerEnumType } from "@nestjs/graphql";
 ${enumImports}
 ${each(
