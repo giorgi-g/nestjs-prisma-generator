@@ -55,8 +55,8 @@ export const computeInputParams = ({
   const primitiveFields = model.fields
     .filter((x) => ['enum', 'scalar'].includes(x.kind))
     .filter((x) => x.type !== 'Json')
-    .filter((x) =>
-      ['size', 'page', 'totalItems', 'totalPages'].includes(x.name),
+    .filter(
+      (x) => !['size', 'page', 'totalItems', 'totalPages'].includes(x.name),
     )
     .map((x) => ({
       ...x,
