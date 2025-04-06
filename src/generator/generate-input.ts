@@ -19,7 +19,7 @@ ${importsString || ''}
 import { PaginationInput } from '../pagination';
 
 ${t.if(apiExtraModels.length, t.apiExtraModels(apiExtraModels))}
-${importsString != null ? '@ObjectType()' : ''}
+${importsString != null ? '@InputType()' : ''}
 export ${t.config.outputType} ${t.inputName(model.name).replace('Dto', 'Input')} extends PaginationInput {
   ${t.fieldsToEntityProps(fields)}
 }
