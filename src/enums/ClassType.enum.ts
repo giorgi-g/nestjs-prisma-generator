@@ -3,4 +3,5 @@ export enum ClassType {
   UPDATE = 'update',
   ENTITY = 'entity',
   PLAIN = 'plain',
+  INPUT = 'input',
 }

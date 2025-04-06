@@ -4,7 +4,7 @@ import type { EntityParams } from './types';
 interface GenerateEntityParam extends EntityParams {
   templateHelpers: TemplateHelpers;
 }
-export const generatePlainDto = ({
+export const generateInput = ({
   model,
   fields,
   imports,
@@ -20,7 +20,7 @@ import { PaginationInput } from '../pagination';
 
 ${t.if(apiExtraModels.length, t.apiExtraModels(apiExtraModels))}
 ${importsString != null ? '@ObjectType()' : ''}
-export ${t.config.outputType} ${t.plainDtoName(model.name)} {
+export ${t.config.outputType} ${t.inputName(model.name).replace('Dto', 'Input')} extends PaginationInput {
   ${t.fieldsToEntityProps(fields)}
 }
 `;

@@ -14,6 +14,8 @@ import { generateEnums as genEnum } from './generate-enums';
 import { DTO_IGNORE_MODEL } from './annotations';
 import { isAnnotatedWith } from './field-classifiers';
 import { NamingStyle, Model, WriteableFileSpecs } from './types';
+import { generatePagination } from './generate-pagination';
+import { generateInput } from './generate-input';
 
 interface RunParam {
   output: string;
@@ -104,6 +106,7 @@ export const run = ({
             : path.join(output, transformFileNameCase(model.name), 'dto')
           : output,
         entity: '',
+        input: '',
       },
     }));
 
@@ -126,6 +129,11 @@ export const run = ({
             ? path.join(output, transformFileNameCase(model.name))
             : path.join(output, transformFileNameCase(model.name), 'dto')
           : output,
+        input: outputToNestJsResourceStructure
+          ? flatResourceStructure
+            ? path.join(output, transformFileNameCase(model.name))
+            : path.join(output, transformFileNameCase(model.name), 'input')
+          : output,
         entity: outputToNestJsResourceStructure
           ? flatResourceStructure
             ? path.join(output, transformFileNameCase(model.name))
@@ -141,6 +149,17 @@ export const run = ({
       enumFiles.push({
         fileName: path.join(output, 'enums.ts'),
         content: genEnum(dmmf.datamodel.enums, prismaClientImportPath),
+      });
+    }
+  }
+
+  const paginationFiles: WriteableFileSpecs[] = [];
+  if (noDependencies || generateEnums) {
+    if (dmmf.datamodel.models.length) {
+      logger('Processing pagination');
+      paginationFiles.push({
+        fileName: path.join(output, 'pagination.ts'),
+        content: generatePagination(),
       });
     }
   }
@@ -192,7 +211,19 @@ export const run = ({
       }),
     };
 
-    return [createDto, updateDto, plainDto];
+    // generate model.dto.ts
+    const inputDto = {
+      fileName: path.join(
+        model.output.input,
+        templateHelpers.inputFilename(model.name, true),
+      ),
+      content: generateInput({
+        ...typeParams.input,
+        templateHelpers,
+      }),
+    };
+
+    return [createDto, updateDto, plainDto, inputDto];
   });
 
   const modelFiles = filteredModels.map((model) => {
@@ -271,11 +302,23 @@ export const run = ({
       }),
     };
 
+    // generate model.dto.ts
+    const inputDto = {
+      fileName: path.join(
+        model.output.input,
+        templateHelpers.inputFilename(model.name, true),
+      ),
+      content: generateInput({
+        ...modelParams.input,
+        templateHelpers,
+      }),
+    };
+
     switch (generateFileTypes) {
       case 'all':
-        return [connectDto, createDto, updateDto, entity, plainDto];
+        return [connectDto, createDto, updateDto, entity, plainDto, inputDto];
       case 'dto':
-        return [connectDto, createDto, updateDto, plainDto];
+        return [connectDto, createDto, updateDto, plainDto, inputDto];
       case 'entity':
         return [entity];
       default:
@@ -283,5 +326,5 @@ export const run = ({
     }
   });
 
-  return [...typeFiles, ...modelFiles, ...enumFiles].flat();
+  return [...paginationFiles, ...typeFiles, ...modelFiles, ...enumFiles].flat();
 };

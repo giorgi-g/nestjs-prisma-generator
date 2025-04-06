@@ -3,6 +3,7 @@ import { DMMF } from '@prisma/generator-helper';
 export interface Model extends DMMF.Model {
   output: {
     dto: string;
+    input: string;
     entity: string;
   };
 }
@@ -74,6 +75,11 @@ export interface CreateDtoParams extends DtoParams {
   apiExtraModels: string[];
 }
 
+export interface InputParams extends DtoParams {
+  extraClasses: string[];
+  apiExtraModels: string[];
+}
+
 export interface UpdateDtoParams extends DtoParams {
   extraClasses: string[];
   apiExtraModels: string[];
@@ -90,6 +96,7 @@ export interface PlainDtoParams extends DtoParams {
 export interface ModelParams {
   connect: ConnectDtoParams;
   create: CreateDtoParams;
+  input: InputParams;
   update: UpdateDtoParams;
   entity: EntityParams;
   plain: PlainDtoParams;
@@ -97,6 +104,7 @@ export interface ModelParams {
 
 export interface TypeParams {
   create: CreateDtoParams;
+  input: InputParams;
   update: UpdateDtoParams;
   plain: PlainDtoParams;
 }

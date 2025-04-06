@@ -6,6 +6,7 @@ import { computeEntityParams } from './compute-entity-params';
 import { computePlainDtoParams } from './compute-plain-dto-params';
 
 import type { Model, ModelParams } from '../types';
+import { computeInputParams } from './compute-input-params';
 
 interface ComputeModelParamsParam {
   model: Model;
@@ -35,6 +36,11 @@ export const computeModelParams = ({
     templateHelpers,
   }),
   plain: computePlainDtoParams({
+    model,
+    allModels,
+    templateHelpers,
+  }),
+  input: computeInputParams({
     model,
     allModels,
     templateHelpers,

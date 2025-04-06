@@ -161,12 +161,15 @@ export const makeHelpers = ({
   const updateDtoName = (name: string) =>
     className(name, updateDtoPrefix, dtoSuffix);
   const plainDtoName = (name: string) => className(name, '', dtoSuffix);
+  const inputName = (name: string) => className(name, '', dtoSuffix);
   const dtoName = (name: string, dtoType: ClassType) => {
     switch (dtoType) {
       case ClassType.CREATE:
         return createDtoName(name);
       case ClassType.UPDATE:
         return updateDtoName(name);
+      case ClassType.INPUT:
+        return inputName(name);
       default:
         return plainDtoName(name);
     }
@@ -186,6 +189,9 @@ export const makeHelpers = ({
 
   const plainDtoFilename = (name: string, withExtension = false) =>
     fileName(name, undefined, '.dto', withExtension);
+
+  const inputFilename = (name: string, withExtension = false) =>
+    fileName(name, undefined, '.input', withExtension);
 
   const fieldType = (
     field: ParsedField,
@@ -304,6 +310,8 @@ export const makeHelpers = ({
     updateDtoFilename,
     entityFilename,
     plainDtoFilename,
+    inputFilename,
+    inputName,
     each,
     echo,
     fieldsToDtoProps,
