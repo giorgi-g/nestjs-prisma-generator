@@ -22,6 +22,10 @@ export ${t.config.outputType} ${t.entityName(model.name)} {
 }
 
 @ObjectType()
-export ${t.config.outputType} ${t.entityName(model.name).replace('Entity', 'Response')} extends Pagination {}
+export ${t.config.outputType} ${t.entityName(model.name).replace('Entity', 'Response')} extends Pagination {
+  @Field(() => [${t.entityName(model.name)}])
+  @ApiProperty({ type: ${t.entityName(model.name)}, isArray: true })
+  content: ${t.entityName(model.name)}[];
+}
 `;
 };
