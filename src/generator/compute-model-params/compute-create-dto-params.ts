@@ -79,12 +79,12 @@ export const computeCreateDtoParams = ({
     const overrides: Partial<DMMF.Field> = {};
     const decorators: IDecorators = {};
 
-
     if (
       isAnnotatedWith(field, DTO_RELATION_INCLUDE_ID) &&
       relationScalarFieldNames.includes(name)
-    )
+    ) {
       field.isReadOnly = false;
+    }
 
     if (isReadOnly(field)) return result;
     if (isAnnotatedWith(field, DTO_CREATE_HIDDEN)) return result;
@@ -132,8 +132,9 @@ export const computeCreateDtoParams = ({
     if (
       !isAnnotatedWith(field, DTO_RELATION_INCLUDE_ID) &&
       relationScalarFieldNames.includes(name)
-    )
+    ) {
       return result;
+    }
 
     // fields annotated with @DtoReadOnly are filtered out before this
     // so this safely allows to mark fields that are required in Prisma Schema
@@ -141,13 +142,24 @@ export const computeCreateDtoParams = ({
     const isDtoOptional = isAnnotatedWith(field, DTO_CREATE_OPTIONAL);
 
     if (!isDtoOptional) {
-      if (isIdWithDefaultValue(field)) return result;
-      if (isUpdatedAt(field)) return result;
+      if (isIdWithDefaultValue(field)) {
+        return result;
+      }
 
-      if (isRequiredWithDefaultValue(field) && field.kind !== 'enum') {
-        if (templateHelpers.config.showDefaultValues)
+      if (isUpdatedAt(field)) {
+        return result;
+      }
+
+      if (
+        isRequiredWithDefaultValue(field) &&
+        field.kind !== 'enum' &&
+        field.type !== 'Boolean'
+      ) {
+        if (templateHelpers.config.showDefaultValues) {
           overrides.isRequired = false;
-        else return result;
+        } else {
+          return result;
+        }
       }
     }
 

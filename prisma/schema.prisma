@@ -162,6 +162,53 @@ model Role {
   @@unique([name, attribute])
 }
 
+model Provider {
+  id         String   @id @unique
+  categories String[]
+  limits     Json     @default("{}") @db.JsonB
+
+  hasRoundHistory Boolean @default(false)
+  games           Game[]
+  providerName    String?
+
+  adapterId String?
+  source    ProviderSource @default(AUTOMATED)
+
+  createdAt DateTime @default(now())
+  createdBy String   @db.Uuid
+  updatedAt DateTime @updatedAt
+  updatedBy String   @db.Uuid
+}
+
+model Game {
+  id String
+
+  provider   Provider @relation(fields: [providerId], references: [id])
+  providerId String
+
+  name       String
+  deviceType String
+  category   String
+  status     GameStatus @default(ENABLED)
+  source     GameSource @default(AUTOMATED)
+  image      String?
+
+  hasDemoMode Boolean @default(false)
+  hasFreeBets Boolean @default(false)
+  isTest      Boolean @default(false)
+
+  rtp        Decimal? @db.Decimal(5, 2)
+  volatility String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  createdBy String? @db.Uuid
+  updatedBy String? @db.Uuid
+
+  @@id([id, providerId])
+}
+
 model CompanyUserRole {
   companyId String
   company   Company @relation(fields: [companyId], references: [id])
@@ -231,6 +278,7 @@ model Bike {
   isActive       Boolean
   products       Product[]
   default        Boolean?  @default(false)
+  hasBackseat    Boolean?  @default(false)
 
   @@unique([vendor, chassis_number], map: "My_Bike_Unique")
 }
@@ -269,4 +317,20 @@ enum Position {
   FOOTER
   BOTTOM
   HIDDEN
+}
+
+enum GameStatus {
+  ENABLED
+  DISABLED
+  UNAVAILABLE
+}
+
+enum GameSource {
+  AUTOMATED
+  MANUAL
+}
+
+enum ProviderSource {
+  AUTOMATED
+  MANUAL
 }

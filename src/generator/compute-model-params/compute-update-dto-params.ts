@@ -137,7 +137,11 @@ export const computeUpdateDtoParams = ({
     if (!isDtoOptional) {
       if (isId(field)) return result;
       if (isUpdatedAt(field)) return result;
-      if (isRequiredWithDefaultValue(field) && field.kind !== 'enum') {
+      if (
+        isRequiredWithDefaultValue(field) &&
+        field.kind !== 'enum' &&
+        field.type !== 'Boolean'
+      ) {
         if (templateHelpers.config.showDefaultValues)
           overrides.isRequired = false;
         else return result;
