@@ -152,7 +152,7 @@ Additionally, special data types are inferred and annotated as well:
 * `Int: { type: 'integer', format: 'int32' }`
 * `BigInt: { type: 'integer', format: 'int64' }`
 * `Float: { type: 'number', format: 'float' }`
-* `Decimal: { type: 'number', format: 'double' }`
+* `Decimal: { type: 'number', format: 'float' }`
 * `DateTime: { type: 'string', format: 'date-time' }`
 
 #### Example

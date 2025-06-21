@@ -170,7 +170,8 @@ export const computePlainDtoParams = ({
 
     if (templateHelpers.config.noDependencies) {
       if (field.type === 'Json') field.type = 'Object';
-      else if (field.type === 'Decimal') field.type = 'String';
+      else if (field.type === 'Decimal') field.type = 'Number';
+      // else if (field.type === 'Decimal') field.type = 'String';
 
       if (field.kind === 'enum') {
         imports.push({
