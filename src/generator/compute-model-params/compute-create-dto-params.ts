@@ -153,7 +153,8 @@ export const computeCreateDtoParams = ({
       if (
         isRequiredWithDefaultValue(field) &&
         field.kind !== 'enum' &&
-        field.type !== 'Boolean'
+        field.type !== 'Boolean' &&
+        field.type !== 'Int'
       ) {
         if (templateHelpers.config.showDefaultValues) {
           overrides.isRequired = false;
