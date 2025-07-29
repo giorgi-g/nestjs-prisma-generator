@@ -259,6 +259,10 @@ export function decorateField(field: ParsedField, dtoType?: ClassType): string {
     return '';
   }
 
+  if (field.documentation?.includes('isNullable')) {
+    field.isNullable = true;
+  }
+
   if (
     field.gqlProperties?.length === 1 &&
     field.gqlProperties[0].name === 'dummy'
@@ -282,7 +286,7 @@ export function decorateField(field: ParsedField, dtoType?: ClassType): string {
     const filteredProps = field.gqlProperties.filter(
       (x) => !['dummy', 'type', 'enum', 'format'].includes(x.name),
     );
-    const hasOtherProps = filteredProps.length;
+    const hasOtherProps = filteredProps.length || field.isNullable === true;
 
     let typeValue = type?.value;
 
@@ -302,13 +306,19 @@ export function decorateField(field: ParsedField, dtoType?: ClassType): string {
 
     decorator += `@Field(${typeValue != null ? `${eval(typeValue)}${hasOtherProps ? ', ' : ''}` : ''}${hasOtherProps ? '{\n' : ''}`;
 
+    if (field.isNullable === true) {
+      decorator += `\tnullable: ${field.isNullable},\n`;
+    }
+
     filteredProps.forEach((prop) => {
-      decorator += ` ${prop.name}: ${
-        prop.noEncapsulation ? prop.value : encapsulateString(prop.value)
-      },\n`;
+      decorator +=
+        prop.name !== 'nullable'
+          ? ` ${prop.name}: ${prop.noEncapsulation ? prop.value : encapsulateString(prop.value)},\n`
+          : '';
     });
 
-    decorator += `${hasOtherProps ? '}' : ''})`;
+    decorator += `${hasOtherProps ? '}' : ''}`;
+    decorator += `)`;
   }
 
   return decorator;

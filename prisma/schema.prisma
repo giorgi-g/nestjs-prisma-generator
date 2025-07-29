@@ -183,6 +183,7 @@ model Provider {
 model Game {
   id String
 
+  /// isNullable
   provider   Provider @relation(fields: [providerId], references: [id])
   providerId String
   maxPlayers Int      @default(0)

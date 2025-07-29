@@ -201,10 +201,14 @@ export function parseClassValidators(
 ): IClassValidator[] {
   const validators: IClassValidator[] = [];
 
-  if (field.isRequired) {
-    validators.push({ name: 'IsNotEmpty' });
+  if (!field.documentation?.includes('isNullable')) {
+    if (field.isRequired) {
+      validators.push({ name: 'IsNotEmpty' });
+    } else {
+      validators.push({ name: 'IsOptional' });
+    }
   } else {
-    validators.push({ name: 'IsOptional' });
+    field.isNullable = true;
   }
 
   if (field.isList) {
