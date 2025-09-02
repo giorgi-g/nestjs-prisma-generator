@@ -3,14 +3,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator client {
+  provider = "prisma-client-js"
+}
+
 generator nestjsDto {
   provider                        = "node -r ts-node/register/transpile-only src/cli.ts"
-  output                          = "../src/@generated/monogodb-dto"
+  output                          = "../src/@generated/nestjs-prisma-gen"
   outputToNestJsResourceStructure = "true"
   flatResourceStructure           = "true"
   exportRelationModifierClasses   = "true"
   reExport                        = "true"
-  generateFileTypes               = "dto"
+  generateFileTypes               = "all"
   createDtoPrefix                 = "Create"
   updateDtoPrefix                 = "Update"
   dtoSuffix                       = "Dto"
@@ -21,8 +25,10 @@ generator nestjsDto {
   noDependencies                  = "false"
   generateEnums                   = "true"
   outputType                      = "class"
+  definiteAssignmentAssertion     = "true"
   prettier                        = "true"
-  requiredResponseApiProperty     = "false"
+  outputApiPropertyType           = "true"
+  wrapRelationsAsType             = "false"
   addGraphqlTypes                 = "true"
 }
 

@@ -1,7 +1,7 @@
 {
   "name": "@atlas/nestjs-prisma-gen",
   "description": "Generates DTO and Entity classes for API and GraphQL from Prisma Schema for NestJS",
-  "version": "0.3.11",
+  "version": "0.3.12",
   "license": "Apache-2.0",
   "author": {
     "name": "Giorgi Gumburashvili",
@@ -37,7 +37,7 @@
     "cleanup:generated": "rimraf src/@generated",
     "pregenerate": "npm run cleanup:generated",
     "generate": "npx prisma generate",
-    "generate:mongo": "npx prisma generate --schema ./prisma/mongodb.prisma",
+    "generate:mongo": "rimraf src/@generated && npx prisma generate --schema ./prisma/mongodb.prisma",
     "prepare": "npm run build"
   },
   "repository": {

@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { camel, pascal, kebab, snake } from 'case';
+import { camel, kebab, pascal, snake } from 'case';
 import { DMMF } from '@prisma/generator-helper';
 import { logger } from '../utils';
 import { makeHelpers } from './template-helpers';
@@ -13,7 +13,7 @@ import { generatePlainDto } from './generate-plain-dto';
 import { generateEnums as genEnum } from './generate-enums';
 import { DTO_IGNORE_MODEL } from './annotations';
 import { isAnnotatedWith } from './field-classifiers';
-import { NamingStyle, Model, WriteableFileSpecs } from './types';
+import { Model, NamingStyle, WriteableFileSpecs } from './types';
 import { generatePagination } from './generate-pagination';
 import { generateInput } from './generate-input';
 
@@ -211,10 +211,14 @@ export const run = ({
       }),
     };
 
-    // generate model.dto.ts
+    // generate model.input.ts
+    const inputPath =
+      model.output.input != null && model.output.input !== ''
+        ? model.output.input
+        : model.output.dto;
     const inputDto = {
       fileName: path.join(
-        model.output.input,
+        inputPath,
         templateHelpers.inputFilename(model.name, true),
       ),
       content: generateInput({
@@ -276,10 +280,14 @@ export const run = ({
     };
     // TODO generate update-model.struct.ts
 
+    const entityPath =
+      model.output.entity != null && model.output.entity !== ''
+        ? model.output.entity
+        : model.output.dto;
     // generate model.entity.ts
     const entity = {
       fileName: path.join(
-        model.output.entity,
+        entityPath,
         templateHelpers.entityFilename(model.name, true),
       ),
       content: generateEntity({
@@ -302,10 +310,15 @@ export const run = ({
       }),
     };
 
-    // generate model.dto.ts
+    const inputPath =
+      model.output.input != null && model.output.input !== ''
+        ? model.output.input
+        : model.output.dto;
+
+    // generate model.input.ts
     const inputDto = {
       fileName: path.join(
-        model.output.input,
+        inputPath,
         templateHelpers.inputFilename(model.name, true),
       ),
       content: generateInput({
