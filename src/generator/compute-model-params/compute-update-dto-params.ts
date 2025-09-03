@@ -55,6 +55,7 @@ import type {
   ParsedField,
   UpdateDtoParams,
 } from '../types';
+import { ClassType } from '../../enums';
 
 interface ComputeUpdateDtoParamsParam {
   model: Model;
@@ -241,6 +242,7 @@ export const computeUpdateDtoParams = ({
         {
           type: includeType,
         },
+        ClassType.UPDATE,
       );
       decorators.apiProperties = apiProperties;
       decorators.gqlProperties = gqlProperties;

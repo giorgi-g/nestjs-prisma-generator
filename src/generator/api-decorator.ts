@@ -119,6 +119,7 @@ export const mapToGQLType = (str: string = ''): string => {
  * Parse all types of annotation that can be decorated with `@ApiProperty()`.
  * @param field
  * @param include All default to `true`. Set to `false` if you want to exclude a type of annotation.
+ * @param classType
  */
 export function parseApiProperty(
   field: DMMF.Field,
@@ -128,6 +129,7 @@ export function parseApiProperty(
     enum?: boolean;
     type?: boolean;
   } = {},
+  classType?: ClassType,
 ): { apiProperties: IApiProperty[]; gqlProperties: IApiProperty[] } {
   const incl = {
     default: true,
@@ -199,11 +201,22 @@ export function parseApiProperty(
         noEncapsulation: true,
       });
 
+      const actionType =
+        classType === ClassType.UPDATE
+          ? 'Update'
+          : classType === ClassType.CREATE
+            ? 'Create'
+            : '';
+      const isObject = field.kind === 'object';
+      const currentType = !isObject
+        ? field.type
+        : `${actionType}${field.type}Dto`;
+
       gqlProperties.push({
         name: 'enum',
         value: field.isList
-          ? '() => [' + jsonTypeToString(field.type) + ']'
-          : '() => ' + jsonTypeToString(field.type),
+          ? '() => [' + jsonTypeToString(currentType) + ']'
+          : '() => ' + jsonTypeToString(currentType),
         noEncapsulation: true,
       });
     }
@@ -303,7 +316,6 @@ export function decorateField(field: ParsedField, dtoType?: ClassType): string {
         typeValue = `${typeValue}Entity`;
       }
     }
-
     decorator += `@Field(${typeValue != null ? `${eval(typeValue)}${hasOtherProps ? ', ' : ''}` : ''}${hasOtherProps ? '{\n' : ''}`;
 
     if (field.isNullable === true) {
@@ -320,6 +332,10 @@ export function decorateField(field: ParsedField, dtoType?: ClassType): string {
     decorator += `${hasOtherProps ? '}' : ''}`;
     decorator += `)`;
   }
+
+  // if (field.name === 'user' || field.name === 'phases') {
+  //   console.log('>>> field', field, decorator);
+  // }
 
   return decorator;
 }

@@ -216,6 +216,9 @@ export const makeHelpers = ({
 
     const castType = rawCastType ? rawCastType.split(',')[0] : undefined;
 
+    // if (field.name === 'user' || field.name === 'phases') {
+    //   console.log('>>> field in helper', field.name, field.kind);
+    // }
     return `${
       castType ||
       (field.kind === 'scalar'
@@ -238,8 +241,9 @@ export const makeHelpers = ({
     dtoType: ClassType,
     useInputTypes = false,
     forceOptional = false,
-  ) =>
-    `${decorateApiProperty(field, dtoType)}${decorateField(field, dtoType)}${decorateClassValidators(field)}${
+  ) => {
+    // console.log('>>> dto type', field);
+    return `${decorateApiProperty(field, dtoType)}${decorateField(field, dtoType)}${decorateClassValidators(field)}${
       field.name
     }${unless(
       field.isRequired && !forceOptional,
@@ -254,6 +258,7 @@ export const makeHelpers = ({
           'null',
         ),
     )};`;
+  };
 
   const fieldsToDtoProps = (
     fields: ParsedField[],

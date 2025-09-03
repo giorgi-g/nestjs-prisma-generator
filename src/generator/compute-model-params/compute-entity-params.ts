@@ -43,6 +43,7 @@ import {
   makeImportsFromClassValidator,
   parseClassValidators,
 } from '../class-validator';
+import { ClassType } from '../../enums';
 
 interface ComputeEntityParamsParam {
   model: Model;
@@ -220,6 +221,7 @@ export const computeEntityParams = ({
             default: false,
             type: templateHelpers.config.outputApiPropertyType,
           },
+          ClassType.ENTITY,
         );
         decorators.apiProperties = apiProperties;
         decorators.gqlProperties = gqlProperties;

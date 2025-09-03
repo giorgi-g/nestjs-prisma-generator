@@ -17,6 +17,12 @@ export const generateCreateDto = ({
   templateHelpers: t,
 }: GenerateCreateDtoParam) => {
   const currentImports = t.importStatements(imports);
+  // console.log(
+  //   '\n\n\n >>> model.name',
+  //   t.createDtoName(model.name),
+  // currentImports,
+  // );
+
   const importsString = currentImports == '' ? null : currentImports;
   const mappedFields = fields.map((x) => {
     return {

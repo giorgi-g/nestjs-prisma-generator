@@ -38,6 +38,7 @@ import {
   makeImportsFromClassValidator,
   parseClassValidators,
 } from '../class-validator';
+import { ClassType } from '../../enums';
 
 interface ComputePlainDtoParamsParam {
   model: Model;
@@ -153,6 +154,7 @@ export const computePlainDtoParams = ({
             default: false,
             type: templateHelpers.config.outputApiPropertyType,
           },
+          ClassType.PLAIN,
         );
         decorators.apiProperties = apiProperties;
         decorators.gqlProperties = gqlProperties;

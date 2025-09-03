@@ -32,31 +32,122 @@ generator nestjsDto {
   addGraphqlTypes                 = "true"
 }
 
-model Product {
-  id     String   @id @default(auto()) @map("_id") @db.ObjectId
-  /// @description name
-  name   String
-  /// @DtoTypeFullUpdate
-  photos Photo[]
-  /// @IsIn(['foo', 'bar'])
-  tags   String[]
+enum CatalogueType {
+  LIVE
+  TENDERS
+  CONTINUOUS
 }
 
-type Photo {
-  height Int
-  /// @description Image width
-  /// @minimum 200
-  /// @Min(200)
-  width  Int
-  /// @DtoApiHidden
-  url    String
-  camera Float[]
-  file   File?
+enum CataloguePhase {
+  PRE_BID
+  X_BID
+  BOTH
 }
 
-type File {
-  path     String
-  mimeType String
-  /// @DtoCastType(number[][][])
-  nested   Json
+type Country {
+  id             String
+  name           String
+  isEuCountry    Boolean @default(false)
+  countryCode    String
+  vatPrecentage  Int
+  timeZoneOffset Int
+  phonePrefix    Int
+}
+
+type User {
+  id          String
+  firstName   String
+  lastName    String
+  email       String?
+  companyId   String
+  companyName String
+}
+
+type UserGroup {
+  name        String
+  companyId   String
+  description String?
+  /// users       User[]
+}
+
+type Vehicle {
+  vehicleId        String
+  licensePlate     String
+  imageUrl         String
+  make             String
+  hasVat           Boolean
+  model            String
+  year             Int
+  enginePower      String
+  transmissionType String?
+  fuelType         String?
+  mileage          Float?
+  mileageUnit      String?
+}
+
+type BidIncrement {
+  fixedAmount     Float?
+  percentage      Float?
+  ruleDescription String?
+}
+
+type BidAgent {
+  vehicleId String
+  userId    String
+  user      User
+  maxAmount Float
+  createdAt DateTime
+}
+
+type PreBid {
+  bidAmount Float
+  bidderId  String
+  createdAt DateTime
+}
+
+/// model Users {
+///   /// @DtoCreateHidden
+///   id           String  @id @default(uuid()) @map("_id")
+///   firstName    String
+///   lastName     String
+///   email        String?
+///   companyId    String
+///   companyName  String
+///   isAuctioneer Boolean
+/// }
+
+model Catalogues {
+  /// @DtoCreateHidden
+  /// @DtoUpdateHidden
+  id                      String         @id @default(uuid()) @map("_id")
+  name                    String
+  type                    CatalogueType
+  currency                String
+  xBidPreparationMinutes  Int
+  numberOfAuctionHalls    Int
+  expirationToBid         Int
+  bidIncrement            BidIncrement
+  remarks                 String?
+  tnc                     String?
+  phases                  CataloguePhase
+  sendOverBidNotification Boolean?
+  buyerGroups             UserGroup[]
+  sellerGroups            UserGroup[]
+}
+
+model Lots {
+  /// @DtoCreateHidden
+  /// @DtoUpdateHidden
+  id                  String     @id @default(uuid()) @map("_id")
+  catalogueId         String
+  country             Country
+  index               Int
+  bidAgents           BidAgent[]
+  description         String?
+  startingPrice       Float
+  reservePrice        Float?
+  sellerCompanyId     String
+  auctioneerCompanyId String
+  preBids             PreBid[]
+  vehicle             Vehicle
 }

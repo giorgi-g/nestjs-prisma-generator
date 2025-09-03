@@ -37,6 +37,7 @@ import {
   makeImportsFromClassValidator,
   parseClassValidators,
 } from '../class-validator';
+import { ClassType } from '../../enums';
 
 interface ComputeInputParamsParam {
   model: Model;
@@ -141,6 +142,7 @@ export const computeInputParams = ({
         {
           type: includeType,
         },
+        ClassType.INPUT,
       );
       decorators.apiProperties = apiProperties;
       decorators.gqlProperties = gqlProperties;
