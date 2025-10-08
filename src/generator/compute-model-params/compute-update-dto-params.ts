@@ -243,6 +243,7 @@ export const computeUpdateDtoParams = ({
           type: includeType,
         },
         ClassType.UPDATE,
+        model.output.isMongoDb,
       );
       decorators.apiProperties = apiProperties;
       decorators.gqlProperties = gqlProperties;

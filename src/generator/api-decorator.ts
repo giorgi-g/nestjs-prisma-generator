@@ -120,6 +120,7 @@ export const mapToGQLType = (str: string = ''): string => {
  * @param field
  * @param include All default to `true`. Set to `false` if you want to exclude a type of annotation.
  * @param classType
+ * @param isMongoDb
  */
 export function parseApiProperty(
   field: DMMF.Field,
@@ -130,6 +131,7 @@ export function parseApiProperty(
     type?: boolean;
   } = {},
   classType?: ClassType,
+  isMongoDb?: boolean,
 ): { apiProperties: IApiProperty[]; gqlProperties: IApiProperty[] } {
   const incl = {
     default: true,
@@ -210,7 +212,7 @@ export function parseApiProperty(
       const isObject = field.kind === 'object';
       const currentType = !isObject
         ? field.type
-        : `${actionType}${field.type}Dto`;
+        : `${actionType}${field.type}${isMongoDb ? 'Dto' : ''}`;
 
       gqlProperties.push({
         name: 'enum',

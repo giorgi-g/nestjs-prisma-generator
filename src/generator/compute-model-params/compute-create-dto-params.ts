@@ -256,6 +256,7 @@ export const computeCreateDtoParams = ({
           type: includeType,
         },
         ClassType.CREATE,
+        model.output.isMongoDb,
       );
       decorators.apiProperties = apiProperties;
       decorators.gqlProperties = gqlProperties;

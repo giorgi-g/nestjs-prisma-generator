@@ -26,6 +26,10 @@ export const generate = async (options: GeneratorOptions) => {
     throw new Error('Failed to parse output path');
   }
 
+  const isMongoDb =
+    options.datasources.find((x) => x.provider === 'mongodb') != null;
+  console.log('>>> options', isMongoDb);
+
   const {
     connectDtoPrefix = 'Connect',
     createDtoPrefix = 'Create',
@@ -200,6 +204,7 @@ export const generate = async (options: GeneratorOptions) => {
     wrapRelationsAsType,
     showDefaultValues,
     addGraphqlTypes,
+    isMongoDb,
   });
 
   // check for deprecated annotations

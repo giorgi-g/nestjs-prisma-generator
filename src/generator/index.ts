@@ -42,11 +42,13 @@ interface RunParam {
   wrapRelationsAsType: boolean;
   showDefaultValues: boolean;
   addGraphqlTypes: boolean;
+  isMongoDb: boolean;
 }
 
 export const run = ({
   output,
   dmmf,
+  isMongoDb,
   ...options
 }: RunParam): WriteableFileSpecs[] => {
   const {
@@ -107,6 +109,7 @@ export const run = ({
           : output,
         entity: '',
         input: '',
+        isMongoDb,
       },
     }));
 
@@ -139,6 +142,7 @@ export const run = ({
             ? path.join(output, transformFileNameCase(model.name))
             : path.join(output, transformFileNameCase(model.name), 'entities')
           : output,
+        isMongoDb,
       },
     }));
 

@@ -5,6 +5,7 @@ export interface Model extends DMMF.Model {
     dto: string;
     input: string;
     entity: string;
+    isMongoDb: boolean;
   };
 }
 

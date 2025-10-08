@@ -141,6 +141,8 @@ export const computeConnectDtoParams = ({
           default: false,
           type: templateHelpers.config.outputApiPropertyType,
         },
+        undefined,
+        model.output.isMongoDb,
       );
       decorators.apiProperties = apiProperties;
       decorators.gqlProperties = gqlProperties;

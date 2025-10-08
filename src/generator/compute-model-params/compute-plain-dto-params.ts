@@ -155,6 +155,7 @@ export const computePlainDtoParams = ({
             type: templateHelpers.config.outputApiPropertyType,
           },
           ClassType.PLAIN,
+          model.output.isMongoDb,
         );
         decorators.apiProperties = apiProperties;
         decorators.gqlProperties = gqlProperties;

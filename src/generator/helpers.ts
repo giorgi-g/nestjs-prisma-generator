@@ -340,6 +340,8 @@ export const generateRelationInput = ({
       const { apiProperties, gqlProperties } = parseApiProperty(
         { ...field, isRequired },
         { type: false },
+        undefined,
+        model.output.isMongoDb,
       );
 
       decorators.apiProperties = apiProperties;
@@ -405,6 +407,8 @@ export const generateRelationInput = ({
       const { apiProperties, gqlProperties } = parseApiProperty(
         { ...field, isRequired },
         { type: false },
+        undefined,
+        model.output.isMongoDb,
       );
 
       decorators.apiProperties = apiProperties;
@@ -460,6 +464,8 @@ export const generateRelationInput = ({
         const { apiProperties, gqlProperties } = parseApiProperty(
           { ...field, isRequired },
           { type: false },
+          undefined,
+          model.output.isMongoDb,
         );
 
         decorators.apiProperties = apiProperties;
@@ -521,6 +527,8 @@ export const generateRelationInput = ({
         const { apiProperties, gqlProperties } = parseApiProperty(
           { ...field, isRequired },
           { type: false },
+          undefined,
+          model.output.isMongoDb,
         );
 
         decorators.apiProperties = apiProperties;
@@ -638,6 +646,8 @@ export const generateUniqueInput = ({
         {
           type: t.config.outputApiPropertyType,
         },
+        undefined,
+        model.output.isMongoDb,
       );
 
       decorators.apiProperties = apiProperties;

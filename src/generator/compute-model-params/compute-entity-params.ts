@@ -222,6 +222,7 @@ export const computeEntityParams = ({
             type: templateHelpers.config.outputApiPropertyType,
           },
           ClassType.ENTITY,
+          model.output.isMongoDb,
         );
         decorators.apiProperties = apiProperties;
         decorators.gqlProperties = gqlProperties;
