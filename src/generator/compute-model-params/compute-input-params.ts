@@ -65,6 +65,34 @@ export const computeInputParams = ({
       hasDefaultValue: false,
     }));
 
+  primitiveFields.push({
+    name: 'sortBy',
+    kind: 'scalar',
+    isList: false,
+    isRequired: false,
+    isUnique: false,
+    isId: false,
+    isReadOnly: false,
+    hasDefaultValue: false,
+    type: 'String',
+    isGenerated: false,
+    isUpdatedAt: false,
+  });
+
+  primitiveFields.push({
+    name: 'sortOrder',
+    kind: 'scalar',
+    isList: false,
+    isRequired: false,
+    isUnique: false,
+    isId: false,
+    isReadOnly: false,
+    hasDefaultValue: false,
+    type: 'String',
+    isGenerated: false,
+    isUpdatedAt: false,
+  });
+
   const allFields = [
     ...primitiveFields,
     ...primitiveFields
@@ -75,6 +103,8 @@ export const computeInputParams = ({
         isList: true,
       })),
   ];
+
+  console.log(allFields);
 
   const fields = allFields.reduce((result, field) => {
     const overrides: Partial<DMMF.Field> = {};
