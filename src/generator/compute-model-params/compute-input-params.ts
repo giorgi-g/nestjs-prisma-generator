@@ -78,6 +78,7 @@ export const computeInputParams = ({
     isGenerated: false,
     isUpdatedAt: false,
   });
+
   primitiveFields.push({
     name: 'sortOrder',
     kind: 'scalar',
