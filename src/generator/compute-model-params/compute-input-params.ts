@@ -104,8 +104,6 @@ export const computeInputParams = ({
       })),
   ];
 
-  console.log(allFields);
-
   const fields = allFields.reduce((result, field) => {
     const overrides: Partial<DMMF.Field> = {};
     const decorators: IDecorators = {};
